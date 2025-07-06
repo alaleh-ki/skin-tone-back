@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend-api/.env
+    depends_on:
+      - ai
+      - tone
+      - palette
+
+  ai:
+    build: ./ai-description-service
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./ai-description-service/.env
+
+  tone:
+    build: ./skin-tone-service
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./skin-tone-service/.env
+
+  palette:
+    build: ./palette-service
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./palette-service/.env
+
+  image:
+    build: ./image-service
+    ports:
+      - "5004:5004"
+    env_file:
+      - ./image-service/.env
