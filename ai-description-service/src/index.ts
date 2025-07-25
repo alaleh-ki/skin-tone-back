@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import aiRoutes from "../src/routes/ai";
+import aiRoutes from './routes/ai'
 import { connectDB } from "./config/db";
 
 dotenv.config();
