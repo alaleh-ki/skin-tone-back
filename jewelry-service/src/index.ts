@@ -2,7 +2,7 @@ import express from "express";
 import jewelryRoutes from "./routes/jewelry";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const app = express();
 app.use(express.json());

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import aiRoutes from './routes/ai'
 import { connectDB } from "./config/db";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const app = express();
 app.use(express.json());

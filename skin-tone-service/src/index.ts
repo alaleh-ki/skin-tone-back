@@ -2,7 +2,7 @@ import express from "express";
 import skinRoutes from "./routes/skin";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 
 const app = express();
