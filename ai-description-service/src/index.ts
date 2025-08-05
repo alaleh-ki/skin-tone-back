@@ -7,7 +7,7 @@ dotenv.config({ quiet: true });
 
 const app = express();
 app.use(express.json());
-app.use("/api/ai", aiRoutes);
+app.use("/", aiRoutes);
 
 const PORT = process.env.PORT || 5001;
 

@@ -7,29 +7,60 @@ dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
 
-interface SkinToneResponse {
+interface PaletteDescriptionResponse {
   tone_description: string;
-  palette_description: string;
-  palette_type: "warm" | "cool" | "neutral";
+  palette_type: "گرم" | "سرد" | "خنثی";
+  clothing: string;
+  eye_makeup: string;
+  makeup: string;
+  lipstick: string;
+  jewelry: string;
+  palettes: Palettes;
+  skin: SkinInfo;
+  hair: HairInfo;
 }
 
-class AiService {
-  async describeImage(tone: string, palette: Array<string>) {
-    const prompt = await this.getPrompt(tone, palette);
-    console.log(prompt);
+interface SkinInfo {
+  tone: string;
+  undertone: string;
+  shade: string;
+  rgb: number[];
+}
+
+interface HairInfo {
+  family: string;
+  shade: string;
+  tone: string;
+  rgb: number[];
+}
+
+interface Palettes {
+  clothing: string[];
+  eye_makeup: string[];
+  makeup: {
+    blush: string[];
+    contour: string[];
+    highlighter: string[];
+  };
+  lipstick: string[];
+  jewelry: string[];
+}
+
+class PaletteDescriptionService {
+  async generateDescription(
+    skin: SkinInfo,
+    hair: HairInfo ,
+    palettes: Palettes
+  ): Promise<PaletteDescriptionResponse> {
+    const prompt = await this.buildPrompt(skin, hair, palettes);
 
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-4o",
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+        messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
-        max_tokens: 400,
+        max_tokens: 600,
       },
       {
         headers: {
@@ -39,7 +70,7 @@ class AiService {
       }
     );
 
-    const content = response.data.choices[0]?.message?.content;
+    const content = response.data.choices?.[0]?.message?.content;
 
     if (!content) {
       throw new Error("Empty response from AI");
@@ -51,50 +82,70 @@ class AiService {
     }
 
     const cleanContent = jsonMatch[0];
-    const parsed: SkinToneResponse = JSON.parse(cleanContent);
+    
+    const parsed: PaletteDescriptionResponse = JSON.parse(cleanContent);
 
     await Description.create({
-      tone,
-      palette,
+      skin,
+      hair,
+      palettes,
       response: parsed,
     });
 
-    return parsed;
+    return {
+      ...parsed,
+      palettes,
+      skin,
+      hair,
+    };
   }
 
-async getPrompt(tone: string, palette: Array<string>) {
-  return `
-شما یک کارشناس مد، زیبایی و رنگ‌شناسی هستید.
+  private async buildPrompt(
+    skin: SkinInfo,
+    hair: HairInfo,
+    palettes: Palettes
+  ): Promise<string> {
+    return `
+شما یک کارشناس مد و رنگ‌شناسی هستید.
 
-هدف:
-بر اساس رنگ پوست و پالت پیشنهادی، یک توضیح فارسی، دوستانه و کاربردی ارائه کن.
+با توجه به مشخصات پوست و مو و پالت‌های رنگی زیر، لطفاً برای هر دسته (لباس، آرایش چشم، آرایش صورت شامل رژگونه، کانتور و هایلایتر، رژ لب و جواهرات) یک یا دو جمله کوتاه و دوستانه بنویسید که چطور این رنگ‌ها با پوست هماهنگ‌اند و چطور می‌توان از آن‌ها در استایل و آرایش استفاده کرد.
 
-📌 قوانین مهم:
-- فقط درباره کاربرد رنگ‌ها در لباس، استایل و آرایش صحبت کن.
-- به هیچ‌وجه درباره دکوراسیون، طراحی داخلی یا گرافیک چیزی ننویس.
-- فقط یک JSON معتبر و کامل خروجی بده. هیچ توضیح یا متن اضافی ننویس.
+اطلاعات پوست:
+- نوع رنگ پوست: "${skin.tone}"
+- تون رنگ پوست: "${skin.undertone}"
+- شدت رنگ پوست: "${skin.shade}"
+- مقدار RGB: ${JSON.stringify(skin.rgb)}
 
-ورودی‌ها:
-- رنگ پوست (HEX): "${tone}"
-- پالت رنگی متناسب با رنگ پوست: ${JSON.stringify(palette)}
+اطلاعات مو:
+- خانواده رنگ مو: "${hair?.family ?? "نامشخص"}"
+- شدت رنگ مو: "${hair?.shade ?? "نامشخص"}"
+- تون رنگ مو: "${hair?.tone ?? "نامشخص"}"
+- مقدار RGB: ${hair ? JSON.stringify(hair.rgb) : "نامشخص"}
 
-📤 خروجی فقط به این ساختار باشد:
+پالت‌های رنگی پیشنهادی:
+
+لباس: ${JSON.stringify(palettes.clothing)}
+آرایش چشم: ${JSON.stringify(palettes.eye_makeup)}
+آرایش صورت:
+  رژگونه: ${JSON.stringify(palettes.makeup.blush)}
+  کانتور: ${JSON.stringify(palettes.makeup.contour)}
+  هایلایتر: ${JSON.stringify(palettes.makeup.highlighter)}
+رژ لب: ${JSON.stringify(palettes.lipstick)}
+جواهرات: ${JSON.stringify(palettes.jewelry)}
+
+🔹 لطفاً فقط یک JSON معتبر و کامل با ساختار زیر خروجی بده، بدون هیچ متن اضافی:
 
 {
-  "tone_description": "[توضیح کوتاه و دوستانه درباره رنگ پوست]",
-  "palette_description": "[چرا این پالت مناسب است و چطور می‌توان از آن در استایل و آرایش استفاده کرد]",
-  "palette_type": "گرم | سرد | خنثی"
+  "tone_description": "یک جمله کوتاه و صمیمی درباره نوع رنگ پوست",
+  "palette_type": "گرم | سرد | خنثی",
+  "clothing": "توضیح کوتاه درباره پالت لباس",
+  "eye_makeup": "توضیح کوتاه درباره پالت آرایش چشم",
+  "makeup": "توضیح کوتاه درباره پالت آرایش صورت (رژگونه، کانتور و هایلایتر)",
+  "lipstick": "توضیح کوتاه درباره پالت رژ لب",
+  "jewelry": "توضیح کوتاه درباره پالت جواهرات"
+}
+`;
+  }
 }
 
-مثال راهنما (فقط برای لحن و سبک، کپی نکن):
-
-{
-  "tone_description": "پوستت یه بژ گرم و لطیفه که حالت صمیمی و طبیعی بهت می‌ده.",
-  "palette_description": "رنگ‌های سبز نعنایی، قهوه‌ای کاراملی و صورتی ملایم به خوبی با پوستت هماهنگ‌ هستن. ازشون توی رژ لب، شال یا مانتو استفاده کن تا استایلت بیشتر بدرخشه.",
-  "palette_type": "گرم"
-}
-  `;
-}
-}
-
-export default new AiService();
+export default new PaletteDescriptionService();

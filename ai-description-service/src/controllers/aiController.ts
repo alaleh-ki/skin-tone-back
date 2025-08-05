@@ -1,35 +1,36 @@
 import dotenv from "dotenv";
 import { Request, Response } from "express";
-import axios from "axios";
-import aiService from "../services/aiService"
+import PaletteDescriptionService from "../services/aiService";
 
 dotenv.config();
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-if (!OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY not set");
+class PaletteDescriptionController {
+  async describePalette(req: Request, res: Response) {
+    const { skin, hair, palettes } = req.body;
 
-interface SkinToneResponse {
-  tone_description: string;
-  palette_description: string;
-  palette_type: "warm" | "cool" | "neutral";
-}
+    if (!skin || !palettes) {
+      return res.status(400).json({
+        error: "Missing required fields",
+        details: "Request body must include 'skin' and 'palettes'",
+      });
+    }
 
-class AiController {
-  async describeImage(req: Request, res: Response) {
-    const { tone, palette } = req.body;
-    try{
-    const parsed = await aiService.describeImage(tone, palette)
-      res.json(parsed);
+    try {
+      const result = await PaletteDescriptionService.generateDescription(
+        skin,
+        hair,
+        palettes
+      );
+
+      res.json(result);
     } catch (error) {
-
-        console.error("Unknown error occurred:", error);
-        res.status(500).json({
-          error: "AI service error",
-          details: "An unknown error occurred",
-        });
-
+      console.error("AI service error:", error);
+      res.status(500).json({
+        error: "AI service error",
+        details: (error as Error).message || "An unknown error occurred",
+      });
     }
   }
 }
 
-export default new AiController();
+export default new PaletteDescriptionController();
