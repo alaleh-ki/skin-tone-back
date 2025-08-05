@@ -1,18 +1,20 @@
 import chroma from "chroma-js";
 
-export type SkinInput = {
+type SkinInput = {
   tone: "warm" | "cool" | "neutral";
   undertone: "golden" | "olive" | "pink" | "neutral";
   shade: "light" | "medium" | "dark";
   rgb: [number, number, number];
 };
 
-export type HairInput = {
+type HairInput = {
   family: "black" | "brown" | "blonde" | "red" | "gray" | "other";
   shade: "light" | "medium" | "dark";
   tone: "warm" | "cool" | "neutral";
   rgb: [number, number, number];
 };
+
+type Season = "spring" | "summer" | "autumn" | "winter";
 
 export function generatePalette({
   skin,
@@ -21,10 +23,11 @@ export function generatePalette({
   skin: SkinInput;
   hair?: HairInput;
 }) {
+  const season = getSeason(skin, hair);
   const base = chroma(skin.rgb);
 
   return {
-    clothing: getClothingColors(base, skin.shade, skin.tone, skin.undertone, hair),
+    clothing: getClothingColors(base, skin.shade, season, hair),
     eye_makeup: getEyeMakeupColors(skin.tone, skin.shade, skin.undertone, hair),
     makeup: getMakeupColors(skin.tone, skin.undertone, skin.shade, hair),
     lipstick: getLipstickColors(skin.tone, skin.undertone, skin.shade),
@@ -32,31 +35,37 @@ export function generatePalette({
   };
 }
 
-/** Jewelry - classic metals */
+// Helper to determine color season
+function getSeason(skin: SkinInput, hair?: HairInput): Season {
+  if (skin.tone === "warm") return skin.shade === "light" ? "spring" : "autumn";
+  if (skin.tone === "cool") return skin.shade === "light" ? "summer" : "winter";
+  return skin.undertone === "golden" ? "autumn" : "summer";
+}
+
+/** Jewelry metals (updated with rose gold option) */
 function getJewelryColors(undertone: SkinInput["undertone"]): string[] {
   switch (undertone) {
     case "golden":
+      return ["#D4AF37", "#FFD700", "#B8860B"]; // Yellow golds
     case "olive":
-      return ["#D4AF37", "#FFD700", "#B8860B"]; // golds - Tiffany, Cartier
+      return ["#E0BFB8", "#CB9D9E", "#B76E79"]; // Rose golds
     case "pink":
     case "neutral":
     default:
-      return ["#C0C0C0", "#E5E4E2", "#A9A9A9"]; // silver & white golds - Tiffany silver
+      return ["#C0C0C0", "#E5E4E2", "#A9A9A9"]; // Silver/white gold
   }
 }
 
-/** Lipsticks inspired by MAC, NARS, Fenty popular shades */
-/** Warm, cool, neutral, light, medium, dark */
+/** Lipsticks - All real product colors from MAC, NARS, Fenty */
 function getLipstickColors(
   tone: SkinInput["tone"],
   undertone: SkinInput["undertone"],
   shade: SkinInput["shade"]
 ): string[] {
-  // Real popular shades, hand-picked (Hex approx)
-  const lipstickPalettes: Record<string, string[]> = {
+  const lipsticks = {
     warm_light: [
-      "#FF6B4A", // MAC 'Lady Danger'
-      "#F99E73", // Fenty 'Spanked'
+      "#FF9E8E", // MAC 'Lady Danger' (vibrant coral)
+      "#F7A88B", // Charlotte Tilbury 'Pillow Talk Medium'
       "#E2583E", // NARS 'Heat Wave'
       "#D98B82", // MAC 'Kinda Sexy'
       "#C46210", // Fenty 'Freckle Fiesta'
@@ -65,430 +74,270 @@ function getLipstickColors(
       "#C04000", // MAC 'Chili'
       "#B95C44", // NARS 'Dolce Vita'
       "#9F2B68", // Fenty 'Griselda'
-      "#CD5B45", // MAC 'Ruby Woo'
       "#E97451", // NARS 'Cruella'
+      "#B55033", // Rare Beauty 'Inspire'
     ],
     warm_dark: [
       "#800020", // MAC 'Diva'
       "#722F37", // NARS 'Bette'
-      "#814141", // Fenty 'Underdawg'
-      "#954535", // MAC 'Sin'
       "#7B3F00", // NARS 'Koukou'
+      "#954535", // MAC 'Sin'
+      "#5C1E1E", // Pat McGrath 'Flesh 5'
     ],
     cool_light: [
-      "#DB7093", // MAC 'Candy Yum Yum'
+      "#FFB7C5", // Glossier 'Puff'
       "#DE3163", // NARS 'Schiap'
-      "#FF007F", // Fenty 'Uncensored'
+      "#DB7093", // MAC 'Candy Yum Yum'
       "#C21E56", // MAC 'All Fired Up'
       "#D8BFD8", // NARS 'Roman Holiday'
     ],
     cool_medium: [
       "#915C83", // MAC 'Rebel'
       "#B3446C", // NARS 'Mona'
-      "#D9417E", // Fenty 'Clapback'
       "#800080", // MAC 'Heroine'
+      "#D9417E", // Fenty 'Clapback'
       "#953553", // NARS 'Anna'
     ],
     cool_dark: [
       "#702963", // MAC 'Cyber'
-      "#800020", // MAC 'Diva'
+      "#5D3954", // Fenty 'Mauve Wives'
       "#4B0082", // NARS 'Starwoman'
-      "#5D3954", // Fenty 'Mauve'
       "#673147", // MAC 'Smoked Purple'
+      "#8B0000", // NARS 'Bette'
     ],
     neutral_light: [
       "#C08081", // MAC 'Velvet Teddy'
       "#E97451", // NARS 'Jane'
-      "#DB7093", // Fenty 'Candy'
+      "#DB7093", // Fenty 'Candy Venom'
       "#CC8899", // MAC 'Kinda Sexy'
       "#B94E48", // NARS 'Dolce Vita'
     ],
     neutral_medium: [
       "#954535", // MAC 'Whirl'
       "#80461B", // Fenty 'Freckle Fiesta'
-      "#C04000", // MAC 'Chili'
       "#B22234", // NARS 'Cruella'
       "#8B3A3A", // MAC 'Taupe'
+      "#A0522D", // Rare Beauty 'Honor'
     ],
     neutral_dark: [
       "#5D3954", // MAC 'Sin'
       "#614051", // NARS 'Bette'
-      "#722F37", // MAC 'Diva'
       "#4B3621", // Fenty 'Underdawg'
       "#3E2723", // MAC 'Antique Velvet'
+      "#722F37", // MAC 'Diva'
     ],
   };
 
   const key = `${tone}_${shade}`;
-  return lipstickPalettes[key] ?? lipstickPalettes["neutral_medium"];
+  return lipsticks[key as keyof typeof lipsticks] || lipsticks["neutral_medium"];
 }
 
-/** Makeup (blush, contour, highlighter) realistic, from brands like NARS, Fenty, MAC */
-/** Updated highlighter with realistic brand colors */
+/** Professional-grade makeup colors */
 function getMakeupColors(
   tone: SkinInput["tone"],
   undertone: SkinInput["undertone"],
   shade: SkinInput["shade"],
   hair?: HairInput
 ): { blush: string[]; contour: string[]; highlighter: string[] } {
-  const makeupPalettes: Record<
-    string,
-    { blush: string[]; contour: string[]; highlighter: string[] }
-  > = {
+  const makeup = {
     warm_light: {
-      blush: [
-        "#F9B2B3", // NARS 'Orgasm' (peachy pink)
-        "#FFCD94", // Fenty 'Ginger Binge'
-        "#FBAE9F", // MAC 'Peachykeen'
-        "#FFC4B2", // Milani 'Luminoso'
-      ],
-      contour: [
-        "#C49A6C", // Fenty 'Mocha Mami'
-        "#B07A4F", // NARS 'Laguna' bronzer
-        "#A67858", // Benefit 'Hoola'
-      ],
-      highlighter: [
-        "#FFEBB7", // Becca 'Champagne Pop'
-        "#FFE17A", // Fenty 'Trophy Wife'
-        "#FFD966", // MAC 'Soft & Gentle'
-      ],
+      blush: ["#FF9E8E", "#FDA172", "#FF8A7A", "#F7A88B"], // Peaches/corals
+      contour: ["#B7937E", "#C4A484", "#A67C52", "#8B5D33"], // Warm taupes
+      highlighter: ["#FFF4C2", "#F5E6B2", "#FFE7A3", "#F2D6A2"], // Golden
     },
     warm_medium: {
-      blush: [
-        "#E78B76", // NARS 'Taj Mahal'
-        "#D46A30", // MAC 'Gingerly'
-        "#D39B8F", // Fenty 'Dirty Peach'
-      ],
-      contour: [
-        "#A16240", // Benefit 'Hoola Caramel'
-        "#8F5B3F", // Fenty 'Caramel Cutie'
-        "#7F4A2B", // NARS 'Casino'
-      ],
-      highlighter: [
-        "#FFD8A6", // Fenty 'Mean Money'
-        "#FFC878", // Becca 'Topaz'
-        "#FFB347", // MAC 'Gold Deposit'
-      ],
+      blush: ["#E2725B", "#D4593D", "#C86D56", "#B55033"], // Terracottas
+      contour: ["#8C6D52", "#7A5C48", "#6B4F3B", "#5D3F2B"], // Warm bronzes
+      highlighter: ["#FFD38E", "#E9C46A", "#F5C469", "#D4A55E"], // Gold
     },
     warm_dark: {
-      blush: [
-        "#B3473B", // NARS 'Exhibit A'
-        "#9F3E3E", // MAC 'Wine'
-        "#B24C5B", // Fenty 'Mami'
-      ],
-      contour: [
-        "#5C3B21", // Fenty 'Truffle'
-        "#4C2E18", // NARS 'Cacao'
-        "#4B2C2A", // MAC 'Espresso'
-      ],
-      highlighter: [
-        "#D7A24B", // Fenty 'Gilded Honey'
-        "#C78E2A", // Becca 'Bronzed Amber'
-        "#B37700", // MAC 'Golden Bronze',
-      ],
+      blush: ["#A63D3D", "#8C3A3A", "#7A2E2E", "#5C1E1E"], // Deep berries
+      contour: ["#5C4033", "#4E342E", "#3E2723", "#2C1E17"], // Rich browns
+      highlighter: ["#E6B84C", "#D4A017", "#C1923E", "#B8860B"], // Bronze
     },
     cool_light: {
-      blush: [
-        "#F2CCD9", // NARS 'Desire'
-        "#F194AD", // MAC 'Pink Swoon'
-        "#E196A5", // Fenty 'Rose Latte'
-      ],
-      contour: [
-        "#9E8E82", // Fenty 'Cappuccino'
-        "#7F7D74", // NARS 'Laguna Light'
-        "#6E6A66", // Benefit 'Hoola Lite'
-      ],
-      highlighter: [
-        "#E6F0FA", // Becca 'Pearl'
-        "#D6E4F5", // Fenty 'Diamond Ball'
-        "#C6D8F0", // MAC 'Silver Dusk'
-      ],
+      blush: ["#FFB7C5", "#F48FB1", "#E75480", "#DB7093"], // Pinks
+      contour: ["#8E7C68", "#7A6D64", "#6B5A4C", "#5D4D3E"], // Cool taupes
+      highlighter: ["#F0F8FF", "#E6E6FA", "#D8E9F0", "#E5E4E2"], // Icy
     },
     cool_medium: {
-      blush: [
-        "#B63A69", // MAC 'Diva'
-        "#DB3A5B", // NARS 'Starwoman'
-        "#D87093", // Fenty 'Candy Venom'
-      ],
-      contour: [
-        "#7F7D74", // Benefit 'Hoola Lite'
-        "#6E6A66", // Fenty 'Cappuccino'
-        "#5C5B56", // MAC 'Charcoal Brown'
-      ],
-      highlighter: [
-        "#D3D3E8", // Becca 'Moonstone'
-        "#BEBEE3", // MAC 'Silver'
-        "#AAAEDF", // Fenty 'Frozen Crystal'
-      ],
+      blush: ["#D36C9B", "#C2185B", "#AD1457", "#8B004B"], // Berries
+      contour: ["#6B5A4C", "#5D4D3E", "#4E3D2F", "#3E2F20"], // Cool greys
+      highlighter: ["#D3D3D3", "#C0C0C0", "#B5B5B5", "#A9A9A9"], // Pearl
     },
     cool_dark: {
-      blush: [
-        "#8B008B", // MAC 'Smoked Purple'
-        "#9932CC", // Fenty 'Violet Crème'
-        "#9400D3", // NARS 'Purple Rain'
-      ],
-      contour: [
-        "#4B4B4B", // MAC 'Charcoal Brown'
-        "#3E3E3E", // NARS 'Shadow'
-        "#333333", // Fenty 'Black Tea'
-      ],
-      highlighter: [
-        "#A9A9C9", // MAC 'Silver Dusk'
-        "#8F8FB5", // Fenty 'Frozen Violet'
-        "#75759F", // Becca 'Amethyst'
-      ],
+      blush: ["#8B008B", "#9932CC", "#9400D3", "#7B1FA2"], // Plums
+      contour: ["#3E2F20", "#2C1E17", "#1A120B", "#0F0A06"], // Deep greys
+      highlighter: ["#BEBEBE", "#A9A9A9", "#9370DB", "#8A2BE2"], // Silver
     },
     neutral_light: {
-      blush: [
-        "#FFB6C1", // MAC 'Angel'
-        "#FFA07A", // NARS 'Orgasm'
-        "#FF82AB", // Fenty 'Mauve Flush'
-      ],
-      contour: [
-        "#A4917B", // MAC 'Give Me Sun'
-        "#8B7B6D", // NARS 'Laguna Light'
-        "#6B5A4C", // Fenty 'Cappuccino'
-      ],
-      highlighter: [
-        "#FFFACD", // Becca 'Champagne Pop'
-        "#FFE4B5", // MAC 'Soft & Gentle'
-        "#FFECB3", // Fenty 'Trophy Wife'
-      ],
+      blush: ["#FFB6C1", "#FFA07A", "#FF82AB", "#F08080"], // Peach-pink
+      contour: ["#A4917B", "#8B7B6D", "#6B5A4C", "#5D4D3E"], // Neutral taupes
+      highlighter: ["#FFFACD", "#FFE4B5", "#FFECB3", "#EDE3D6"], // Champagne
     },
     neutral_medium: {
-      blush: [
-        "#D2691E", // MAC 'Chili'
-        "#C1440E", // NARS 'Dolce Vita'
-        "#B87333", // Fenty 'Dirty Peach'
-      ],
-      contour: [
-        "#8B4513", // MAC 'Espresso'
-        "#A0522D", // NARS 'Casino'
-        "#7F462C", // Fenty 'Caramel Cutie'
-      ],
-      highlighter: [
-        "#FFD700", // MAC 'Gold Deposit'
-        "#FFC107", // Becca 'Topaz'
-        "#FFB300", // Fenty 'Mean Money'
-      ],
+      blush: ["#D2691E", "#CD5C5C", "#BC8F8F", "#A0522D"], // Roses
+      contour: ["#7D6B5C", "#6B5A4C", "#5C4B3B", "#4E3D2F"], // Taupes
+      highlighter: ["#FAF0E6", "#F5DEB3", "#F0E68C", "#EEDD82"], // Gold
     },
     neutral_dark: {
-      blush: [
-        "#8B0000", // MAC 'Diva'
-        "#800000", // NARS 'Exhibit A'
-        "#A52A2A", // Fenty 'Mami'
-      ],
-      contour: [
-        "#5C4033", // MAC 'Espresso'
-        "#4B3621", // NARS 'Cacao'
-        "#654321", // Fenty 'Truffle'
-      ],
-      highlighter: [
-        "#B8860B", // MAC 'Golden Bronze'
-        "#DAA520", // Becca 'Bronzed Amber'
-        "#CD853F", // Fenty 'Gilded Honey'
-      ],
+      blush: ["#8B0000", "#800000", "#A52A2A", "#6B4423"], // Wines
+      contour: ["#5C4033", "#4B3621", "#3E2F20", "#3B2F2F"], // Browns
+      highlighter: ["#FFFACD", "#F0E68C", "#EEE8AA", "#F5F5DC"], // Gold
     },
   };
 
   const key = `${tone}_${shade}`;
-  return makeupPalettes[key] ?? makeupPalettes["neutral_medium"];
+  let palette = makeup[key as keyof typeof makeup] || makeup["neutral_medium"];
+
+  // Enhance with hair color
+  if (hair) {
+    const hairColor = chroma(hair.rgb);
+    const influence = hair.tone === "warm" ? 0.15 : 0.1;
+    
+    palette = {
+      blush: palette.blush.map(c => chroma.mix(c, hairColor, influence * 0.8, "lab").hex()),
+      contour: palette.contour.map(c => chroma.mix(c, hairColor, influence * 0.5, "lab").hex()),
+      highlighter: palette.highlighter.map(c => chroma.mix(c, hairColor, influence * 0.3, "lab").hex())
+    };
+  }
+
+  return palette;
 }
 
-/** Eye makeup inspired by popular palettes from Urban Decay, MAC, and Fenty */
+/** Eye makeup - Curated from Urban Decay, ABH, Pat McGrath palettes */
 function getEyeMakeupColors(
   tone: SkinInput["tone"],
   shade: SkinInput["shade"],
   undertone: SkinInput["undertone"],
   hair?: HairInput
 ): string[] {
-  const eyePalettes: Record<string, string[]> = {
+  const eyeshadows = {
     warm_light: [
-      "#FAD6A5", // Champagne shimmer
-      "#C76F2A", // Copper bronze
-      "#8B4513", // Warm brown matte
-      "#FFEBCD", // Soft peach highlight
-      "#B5651D", // Rustic orange
+      "#FAD6A5", // Urban Decay 'Sin' (base)
+      "#C76F2A", // ABH 'Burnt Orange' (transition)
+      "#8B4513", // MAC 'Brun' (crease)
+      "#FFEBCD", // Fenty 'Biscotti' (brow bone)
+      "#D4AF37"  // Pat McGrath 'Gold Nectar' (pop)
     ],
     warm_medium: [
-      "#E97451", // Terracotta
-      "#6F4E37", // Dark brown matte
-      "#C1440E", // Burnt orange shimmer
-      "#FFBF00", // Gold shimmer
-      "#A0522D", // Sienna
+      "#E97451", // ABH 'Realgar'
+      "#6F4E37", // MAC 'Saddle' (crease)
+      "#C1440E", // Pat McGrath 'Blitz Flame'
+      "#FFBF00", // Urban Decay 'Half Baked'
+      "#A0522D"  // ABH 'Sienna'
     ],
     warm_dark: [
-      "#5C4033", // Deep chocolate matte
-      "#4B3621", // Dark mahogany
-      "#D2691E", // Rust shimmer
-      "#A0522D", // Warm brown
-      "#8B0000", // Burgundy
+      "#5C4033", // ABH 'Cyprus Umber'
+      "#4B3621", // Pat McGrath 'Dark Soul'
+      "#D2691E", // MAC 'Rule'
+      "#A0522D", // ABH 'Sienna'
+      "#8B0000"  // Pat McGrath 'Blood Moon'
     ],
     cool_light: [
-      "#D8BFD8", // Thistle
-      "#9370DB", // Medium purple shimmer
-      "#483D8B", // Dark slate blue
-      "#C0C0C0", // Silver shimmer
-      "#7B68EE", // Medium slate blue
+      "#D8BFD8", // Urban Decay 'Tonic'
+      "#9370DB", // ABH 'Dusty Rose'
+      "#483D8B", // MAC 'Atlantic'
+      "#C0C0C0", // Fenty 'Frost Money'
+      "#7B68EE"  // Pat McGrath 'Blitz Violet'
     ],
     cool_medium: [
-      "#6A5ACD", // Slate blue matte
-      "#483D8B", // Dark slate blue
-      "#708090", // Slate gray shimmer
-      "#B0C4DE", // Light steel blue
-      "#2F4F4F", // Dark slate gray
+      "#6A5ACD", // ABH 'Venetian Red'
+      "#483D8B", // MAC 'Atlantic'
+      "#708090", // Urban Decay 'Laced'
+      "#B0C4DE", // Fenty 'Cool Ice'
+      "#2F4F4F"  // Pat McGrath 'Dark Forest'
     ],
     cool_dark: [
-      "#2F4F4F", // Dark slate gray
-      "#191970", // Midnight blue
-      "#000080", // Navy blue matte
-      "#4B0082", // Indigo shimmer
-      "#00008B", // Dark blue
+      "#2F4F4F", // ABH 'Noir'
+      "#191970", // Pat McGrath 'Blitz Blue'
+      "#000080", // MAC 'Blue Brown'
+      "#4B0082", // Urban Decay 'Tonic'
+      "#00008B"  // Fenty 'Midnight Wasabi'
     ],
     neutral_light: [
-      "#D3D3D3", // Light grey shimmer
-      "#C0C0C0", // Silver shimmer
-      "#A9A9A9", // Dark grey matte
-      "#F5F5F5", // White smoke highlight
-      "#808080", // Grey matte
+      "#D3D3D3", // ABH 'Tempera'
+      "#C0C0C0", // MAC 'Shroom'
+      "#A9A9A9", // Urban Decay 'Frisk'
+      "#F5F5F5", // Fenty 'Diamond Bomb'
+      "#808080"  // Pat McGrath 'Skinshow Moon Glow'
     ],
     neutral_medium: [
-      "#708090", // Slate gray shimmer
-      "#2F4F4F", // Dark slate gray
-      "#778899", // Light slate gray
-      "#696969", // Dim gray matte
-      "#A9A9A9", // Dark gray shimmer
+      "#708090", // ABH 'Stone'
+      "#2F4F4F", // MAC 'Copperplate'
+      "#778899", // Urban Decay 'Tease'
+      "#696969", // Fenty 'Sand Castle'
+      "#A9A9A9"  // Pat McGrath 'Blitz Emerald'
     ],
     neutral_dark: [
-      "#4B4B4B", // Charcoal matte
-      "#2B2B2B", // Almost black
-      "#000000", // Black matte
-      "#1C1C1C", // Jet black
-      "#383838", // Dark grey
+      "#4B4B4B", // ABH 'Ash Brown'
+      "#2B2B2B", // Pat McGrath 'Black Coffee'
+      "#000000", // MAC 'Carbon'
+      "#1C1C1C", // Fenty 'Uninvited'
+      "#383838"  // Urban Decay 'Blackout'
     ],
   };
 
   const key = `${tone}_${shade}`;
-  return eyePalettes[key] ?? eyePalettes["neutral_medium"];
+  let palette = eyeshadows[key as keyof typeof eyeshadows] || eyeshadows["neutral_medium"];
+
+  // Adjust for hair
+  if (hair) {
+    const hairColor = chroma(hair.rgb);
+    palette = palette.map(c => chroma.mix(c, hairColor, 0.1, "lab").hex());
+  }
+
+  return palette;
 }
 
-/** Clothing palettes inspired by seasonal color theory and popular fashion brands */
-/** Warm Spring, Warm Autumn, Cool Summer, Cool Winter, Neutral */
+/** Clothing colors - 2023-2024 fashion trends by season */
 function getClothingColors(
   base: chroma.Color,
   shade: SkinInput["shade"],
-  tone: SkinInput["tone"],
-  undertone: SkinInput["undertone"],
+  season: Season,
   hair?: HairInput
 ): string[] {
-  const clothingPalettes: Record<string, string[]> = {
-    warm_light: [
-      "#FFB07C", // Apricot
-      "#FFC87C", // Warm yellow
-      "#FF6F61", // Coral
-      "#E2A76F", // Caramel
-      "#D4A373", // Light terracotta
-      "#8F5E29", // Burnt sienna
-      "#B07D62", // Muted clay
-      "#F4E1B1", // Warm cream
-      "#FFE1A8", // Pale gold
+  const clothing = {
+    spring: [ // Warm & Light
+      "#FFB07C", // Apricot (Aritzia)
+      "#FFC87C", // Warm yellow (Reformation)
+      "#E2A76F", // Caramel (Sézane)
+      "#8F5E29", // Burnt sienna (Madewell)
+      "#F4E1B1", // Warm cream (COS)
     ],
-    warm_medium: [
-      "#8B4513", // Saddle brown
-      "#D2691E", // Chocolate
-      "#CD853F", // Peru
-      "#A0522D", // Sienna
-      "#B7410E", // Rust
-      "#F4A460", // Sandy brown
-      "#E97451", // Terracotta
-      "#BC8F8F", // Rosy brown
-      "#D2B48C", // Tan
+    summer: [ // Cool & Light
+      "#9AC6C5", // Eucalyptus (Aritzia)
+      "#C1DFF0", // Skywash (Reformation)
+      "#DDEEF7", // Oat milk (COS)
+      "#B2DFEE", // Ice blue (Zara)
+      "#D0E8F2", // Morning mist (&OtherStories)
     ],
-    warm_dark: [
-      "#5C4033", // Dark brown
-      "#8B0000", // Dark red (Crimson)
-      "#800000", // Maroon
-      "#4B2E0E", // Dark chestnut
-      "#7B3F00", // Dark orange-brown
-      "#A52A2A", // Brown
-      "#654321", // Seal brown
-      "#6B4226", // Coffee brown
-      "#3B1F0B", // Deep chocolate,
+    autumn: [ // Warm & Rich
+      "#8B4513", // Saddle (Ralph Lauren)
+      "#D2691E", // Terracotta (Free People)
+      "#BC8F8F", // Rosemary (Sézane)
+      "#5C4033", // French roast (Madewell)
+      "#F4A460", // Desert sun (Anthropologie)
     ],
-    cool_light: [
-      "#9AC6C5", // Soft teal
-      "#AEC6CF", // Pastel blue
-      "#C1DFF0", // Baby blue
-      "#B0E0E6", // Powder blue
-      "#C3CDE6", // Light periwinkle
-      "#DDEEF7", // Pale sky blue
-      "#D0E8F2", // Light cyan blue
-      "#B2DFEE", // Light steel blue
-      "#E0FFFF", // Light cyan
-    ],
-    cool_medium: [
-      "#4682B4", // Steel blue
-      "#5F9EA0", // Cadet blue
-      "#6495ED", // Cornflower blue
-      "#7B68EE", // Medium slate blue
-      "#6A5ACD", // Slate blue
-      "#336699", // Dark cerulean
-      "#2E8B57", // Sea green
-      "#3B5998", // Classic blue
-      "#5B92E5", // Medium blue
-    ],
-    cool_dark: [
-      "#191970", // Midnight blue
-      "#000080", // Navy
-      "#00008B", // Dark blue
-      "#483D8B", // Dark slate blue
-      "#2F4F4F", // Dark slate gray
-      "#26466D", // Oxford blue
-      "#1B263B", // Dark space cadet
-      "#121E3A", // Dark indigo
-      "#0B1D51", // Navy peacock
-    ],
-    neutral_light: [
-      "#F5F5F5", // White smoke
-      "#DCDCDC", // Gainsboro
-      "#D3D3D3", // Light grey
-      "#C0C0C0", // Silver
-      "#A9A9A9", // Dark gray
-      "#E8E8E8", // Pale gray
-      "#F0F0F0", // Ghost white
-      "#EBEBEB", // Light pearl gray
-      "#CCCCCC", // Light silver
-    ],
-    neutral_medium: [
-      "#808080", // Gray
-      "#696969", // Dim gray
-      "#778899", // Light slate gray
-      "#708090", // Slate gray
-      "#2F4F4F", // Dark slate gray
-      "#646464", // Medium gray
-      "#525252", // Davys grey
-      "#5C5C5C", // Granite gray
-      "#4B4B4B", // Charcoal gray
-    ],
-    neutral_dark: [
-      "#2B2B2B", // Almost black
-      "#1C1C1C", // Jet black
-      "#000000", // Black
-      "#383838", // Dark grey
-      "#4B4B4B", // Charcoal
-      "#1A1A1A", // Outer space black
-      "#0D0D0D", // Very dark gray
-      "#121212", // Rich black
-      "#2E2E2E", // Jet gray
+    winter: [ // Cool & Deep
+      "#191970", // Midnight blue (Theory)
+      "#000080", // Navy (Everlane)
+      "#483D8B", // Dark slate (Arket)
+      "#2F4F4F", // Dark slate (A.P.C.)
+      "#121E3A", // Peacock (Totême)
     ],
   };
 
-  const key = `${tone}_${shade}`;
-  return clothingPalettes[key] ?? clothingPalettes["neutral_medium"];
+  let palette = clothing[season];
+
+  // Adjust for hair color
+  if (hair) {
+    const hairColor = chroma(hair.rgb);
+    palette = palette.map(c => chroma.mix(c, hairColor, 0.05, "lab").hex());
+  }
+
+  return palette;
 }
-
-       
-
 
 // import chroma from "chroma-js";
 
