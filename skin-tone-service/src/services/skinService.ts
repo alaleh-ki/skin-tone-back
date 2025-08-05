@@ -74,7 +74,7 @@ export function analyzeSkin(rgb: [number, number, number]): SkinAnalysis {
     undertone = "olive";
   }
 
-  return { tone, undertone, shade, rgb };
+  return { tone, undertone, shade, rgb: [rgb[0], rgb[1], rgb[2]] };
 }
 
 export function analyzeHair(rgb: [number, number, number]): HairAnalysis {
@@ -133,5 +133,5 @@ export function analyzeHair(rgb: [number, number, number]): HairAnalysis {
   if (family === "red" || family === "auburn") tone = "warm";
   if (family === "black" && l < 15) tone = "cool";
 
-  return { family, shade, tone, rgb };
+  return { family, shade, tone, rgb: [rgb[0], rgb[1], rgb[2]] };
 }
