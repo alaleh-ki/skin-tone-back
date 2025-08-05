@@ -92,12 +92,7 @@ class PaletteDescriptionService {
       response: parsed,
     });
 
-    return {
-      ...parsed,
-      palettes,
-      skin,
-      hair,
-    };
+    return parsed;
   }
 
   private async buildPrompt(
