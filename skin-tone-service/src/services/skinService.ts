@@ -1,137 +1,167 @@
 import chroma from "chroma-js";
 
-type SkinTone = "warm" | "cool" | "neutral" | "olive";
-type Undertone = "golden" | "olive" | "pink" | "peach" | "neutral";
-type Shade = "very light" | "light" | "medium" | "tan" | "dark" | "deep";
-type HairFamily = "black" | "brown" | "blonde" | "red" | "gray" | "auburn" | "highlighted";
-type HairTone = "warm" | "cool" | "neutral";
+type Undertone = "warm" | "cool" | "neutral" | "olive";
+type Value = "very light" | "light" | "medium" | "medium-dark" | "dark" | "deep";
+type ChromaLevel = "very bright" | "bright" | "medium" | "soft" | "muted";
+type Season =
+  | "Bright Spring" | "Warm Spring" | "Light Spring"
+  | "Light Summer"  | "Cool Summer" | "Soft Summer"
+  | "Bright Winter" | "Cool Winter" | "Deep Winter"
+  | "Deep Autumn"   | "Warm Autumn" | "Soft Autumn";
 
-interface SkinAnalysis {
-  tone: SkinTone;
+interface ColorAnalysis {
   undertone: Undertone;
-  shade: Shade;
-  rgb: [number, number, number];
+  value: Value;
+  chroma: ChromaLevel;
+  season: Season;
 }
 
-interface HairAnalysis {
-  family: HairFamily;
-  shade: "light" | "medium" | "dark";
-  tone: HairTone;
-  rgb: [number, number, number];
+export function analyzePersonalColors(
+  skinRgb: [number, number, number],
+  hairRgb: [number, number, number],
+  eyeRgb: [number, number, number]
+): ColorAnalysis {
+  // Step 1 — Analyze individual features
+  const skin = analyzeSkin(skinRgb);
+  const hair = analyzeHair(hairRgb);
+  const eyes = analyzeEyes(eyeRgb);
+
+  // Step 2 — Determine undertone (skin-first, then adjust)
+  let undertone: Undertone = skin.undertone;
+  if (skin.undertone === "neutral") {
+    if (hair.tone === "warm" || eyes.tone === "warm") undertone = "warm";
+    else if (hair.tone === "cool" || eyes.tone === "cool") undertone = "cool";
+  }
+
+  // Step 3 — Determine value (light vs deep)
+  const skinLightness = chroma(skinRgb).get("lab.l");
+  const hairLightness = chroma(hairRgb).get("lab.l");
+  const eyeLightness  = chroma(eyeRgb).get("lab.l");
+
+  // Weighted average: skin 50%, hair 30%, eyes 20%
+  const avgLightness = (skinLightness * 0.5) + (hairLightness * 0.3) + (eyeLightness * 0.2);
+  const contrast = Math.max(
+    Math.abs(skinLightness - hairLightness),
+    Math.abs(skinLightness - eyeLightness),
+    Math.abs(hairLightness - eyeLightness)
+  );
+
+  let value: Value;
+  if (avgLightness > 80) value = contrast > 35 ? "medium" : "very light";
+  else if (avgLightness > 65) value = contrast > 40 ? "medium-dark" : "light";
+  else if (avgLightness > 50) value = contrast > 45 ? "dark" : "medium";
+  else value = contrast > 30 ? "deep" : "dark";
+
+  // Step 4 — Determine chroma (color clarity)
+  const skinSat = chroma(skinRgb).get("hsl.s");
+  const hairSat = chroma(hairRgb).get("hsl.s");
+  const eyeSat  = chroma(eyeRgb).get("hsl.s");
+  const avgSat = (skinSat + hairSat + eyeSat) / 3;
+
+  let chromaValue: ChromaLevel;
+  if (avgSat > 0.65) chromaValue = "very bright";
+  else if (avgSat > 0.5) chromaValue = "bright";
+  else if (avgSat > 0.35) chromaValue = "medium";
+  else if (avgSat > 0.2) chromaValue = "soft";
+  else chromaValue = "muted";
+
+  // Step 5 — Map to season
+  const season = getSeasonFromAttributes(undertone, value, chromaValue);
+
+  return { undertone, value, chroma: chromaValue, season };
 }
 
-export function analyzeSkin(rgb: [number, number, number]): SkinAnalysis {
+// ===== Season Mapping Logic =====
+function getSeasonFromAttributes(
+  undertone: Undertone,
+  value: Value,
+  chroma: ChromaLevel
+): Season {
+  // --- OLIVE HANDLING ---
+  // Olive can lean warm or cool depending on chroma and depth
+  if (undertone === "olive") {
+    if (value.includes("light")) {
+      undertone = chroma.includes("bright") ? "warm" : "cool";
+    } else if (value.includes("medium")) {
+      undertone = chroma.includes("soft") || chroma.includes("muted") ? "cool" : "warm";
+    } else {
+      // deep/dark olives often lean warm unless chroma is very muted
+      undertone = chroma.includes("muted") ? "cool" : "warm";
+    }
+  }
+
+  // --- WARM UNDERTONE ---
+  if (undertone === "warm") {
+    if (value.includes("light")) {
+      return chroma.includes("bright") ? "Bright Spring" : "Light Spring";
+    }
+    if (value.includes("medium")) {
+      return chroma.includes("soft") || chroma.includes("muted")
+        ? "Soft Autumn"
+        : "Warm Autumn";
+    }
+    // Deep/dark warm — check chroma to separate Soft Autumn from Deep Autumn
+    return chroma.includes("soft") || chroma.includes("muted")
+      ? "Soft Autumn"
+      : "Deep Autumn";
+  }
+
+  // --- COOL UNDERTONE ---
+  if (undertone === "cool") {
+    if (value.includes("light")) {
+      return chroma.includes("bright") ? "Light Summer" : "Cool Summer";
+    }
+    if (value.includes("medium")) {
+      // muted mediums lean toward Soft Summer
+      return chroma.includes("soft") || chroma.includes("muted")
+        ? "Soft Summer"
+        : "Cool Winter";
+    }
+    // Deep/dark cool — muted chroma moves to Cool Summer, bright to Deep Winter
+    return chroma.includes("soft") || chroma.includes("muted")
+      ? "Cool Summer"
+      : "Deep Winter";
+  }
+
+  // --- NEUTRAL UNDERTONE ---
+  if (undertone === "neutral") {
+    if (value.includes("light")) {
+      return chroma.includes("bright") ? "Bright Spring" : "Soft Summer";
+    }
+    if (value.includes("medium")) {
+      return chroma.includes("bright") ? "Bright Winter" : "Soft Autumn";
+    }
+    // Deep/dark neutrals — bright → Deep Winter, muted → Soft Autumn
+    return chroma.includes("bright") ? "Deep Winter" : "Soft Autumn";
+  }
+
+  // --- FALLBACK ---
+  return "Soft Summer";
+}
+
+// ===== Helpers =====
+function analyzeSkin(rgb: [number, number, number]): { undertone: Undertone } {
   const color = chroma(rgb);
   const [l, a, b] = color.lab();
-  const h = color.get('hsl.h') || 0;
-  const s = color.get('hsl.s');
+  const hue = color.get("hsl.h");
 
-  // Determine shade based on luminance with more granularity
-  let shade: Shade;
-  if (l > 85) shade = "very light";
-  else if (l > 70) shade = "light";
-  else if (l > 55) shade = "medium";
-  else if (l > 40) shade = "tan";
-  else if (l > 25) shade = "dark";
-  else shade = "deep";
-
-  // Determine skin tone and undertone with more precision
-  let tone: SkinTone;
-  let undertone: Undertone;
-
-  if (b > 12) {
-    tone = "warm";
-    if (a > 8 && h > 25 && h < 45) {
-      undertone = "golden";
-    } else if (a < 6 && b > 15) {
-      undertone = "olive";
-    } else if (h > 15 && h < 35) {
-      undertone = "peach";
-    } else {
-      undertone = "golden";
-    }
-  } else if (a > 10 && b < 10) {
-    tone = "cool";
-    if (h > 330 || h < 15) {
-      undertone = "pink";
-    } else {
-      undertone = "neutral";
-    }
-  } else {
-    tone = "neutral";
-    if (Math.abs(a - b) < 5) {
-      undertone = "neutral";
-    } else if (b > a) {
-      undertone = "peach";
-    } else {
-      undertone = "pink";
-    }
-  }
-
-  // Special case for olive skin
-  if (a < 5 && b > 10 && l < 70) {
-    tone = "olive";
-    undertone = "olive";
-  }
-
-  return { tone, undertone, shade, rgb: [rgb[0], rgb[1], rgb[2]] };
+  if (b > 12 && a > 5) return { undertone: "warm" };
+  if (b < 8 && a < 5) return { undertone: "cool" };
+  if (a < 6 && b > 8) return { undertone: "olive" };
+  if (hue >= 40 && hue <= 65) return { undertone: "warm" };
+  return { undertone: "neutral" };
 }
 
-export function analyzeHair(rgb: [number, number, number]): HairAnalysis {
-  const color = chroma(rgb);
-  const [l, a, b] = color.lab();
-  const h = color.get('hsl.h') || 0;
-  const s = color.get('hsl.s');
+function analyzeHair(rgb: [number, number, number]): { tone: "warm" | "cool" | "neutral" } {
+  const [ , , b] = chroma(rgb).lab();
+  if (b > 12) return { tone: "warm" };
+  if (b < 6) return { tone: "cool" };
+  return { tone: "neutral" };
+}
 
-  let shade: "light" | "medium" | "dark";
-  if (l > 75) shade = "light";
-  else if (l > 35) shade = "medium";
-  else shade = "dark";
-
-
-  let family: HairFamily;
-
-
-  if (l < 25 && s < 0.15) {
-    family = "black";
-  }
-
-  else if (l > 70 && s < 0.2) {
-    family = "gray";
-  }
-
-  else if (l > 65 && h > 30 && h < 70) {
-    family = "blonde";
-  }
-
-  else if (h < 25 || h > 330) {
-    if (s > 0.5 && l > 40) {
-      family = "red";
-    } else if (h > 340 && s > 0.4) {
-      family = "auburn";
-    } else {
-      family = "brown";
-    }
-  }
-
-  else if (color.hex() !== chroma([rgb[0]*0.9, rgb[1]*0.9, rgb[2]*0.9]).hex()) {
-    family = "highlighted";
-  }
-  else {
-    family = "brown";
-  }
-
-  let tone: HairTone;
-  if (b > 15 && a > 5) {
-    tone = "warm";
-  } else if (b < 5 && a < 5) {
-    tone = "cool";
-  } else {
-    tone = "neutral";
-  }
-
-  if (family === "red" || family === "auburn") tone = "warm";
-  if (family === "black" && l < 15) tone = "cool";
-
-  return { family, shade, tone, rgb: [rgb[0], rgb[1], rgb[2]] };
+function analyzeEyes(rgb: [number, number, number]): { tone: "warm" | "cool" | "neutral" } {
+  const [ , , b] = chroma(rgb).lab();
+  if (b > 10) return { tone: "warm" };
+  if (b < 6) return { tone: "cool" };
+  return { tone: "neutral" };
 }

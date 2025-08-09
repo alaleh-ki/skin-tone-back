@@ -6,19 +6,18 @@ dotenv.config();
 
 class PaletteDescriptionController {
   async describePalette(req: Request, res: Response) {
-    const { skin, hair, palettes } = req.body;
+    const { season, palettes } = req.body;
 
-    if (!skin || !palettes) {
+    if (!season || !palettes) {
       return res.status(400).json({
         error: "Missing required fields",
-        details: "Request body must include 'skin' and 'palettes'",
+        details: "Request body must include 'season' and 'palettes'",
       });
     }
 
     try {
       const result = await PaletteDescriptionService.generateDescription(
-        skin,
-        hair,
+        season,
         palettes
       );
 

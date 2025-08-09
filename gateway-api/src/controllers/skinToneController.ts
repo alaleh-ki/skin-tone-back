@@ -11,21 +11,20 @@ export const analyzeSkinAndHairProxy = async (req: Request, res: Response) => {
     const skinAnalysis = skinToneResponse.data;
 
     const paletteRequest = {
-      skin: skinAnalysis.skin,
-      hair: skinAnalysis.hair,
+      season: skinAnalysis.result.season,
+      undertone: skinAnalysis.result.undertone,
     };
     console.log("paletteRequest", paletteRequest);
     const colorPaletteResponse = await axios.post(COLOR_PALETTE_SERVICE_URL, paletteRequest);
     const colorPalette = colorPaletteResponse.data;
     console.log("colorPalette", colorPalette);
     const aiDescriptionResponse = await axios.post(AI_DESCRIPTION_SERVICE_URL, {
-      skin: skinAnalysis.skin,
-      hair: skinAnalysis.hair,
       palettes: colorPalette,
+      season: skinAnalysis.result.season,
     });
     console.log("aiDescriptionResponse", aiDescriptionResponse.data);
     res.json({
-      skinTone: skinToneResponse.data,
+      skinTone: skinToneResponse.data.result,
       colorPalette: colorPaletteResponse.data,
       aiDescription: aiDescriptionResponse.data,
     });

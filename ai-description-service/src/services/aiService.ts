@@ -16,22 +16,6 @@ interface PaletteDescriptionResponse {
   lipstick: string;
   jewelry: string;
   palettes: Palettes;
-  skin: SkinInfo;
-  hair: HairInfo;
-}
-
-interface SkinInfo {
-  tone: string;
-  undertone: string;
-  shade: string;
-  rgb: number[];
-}
-
-interface HairInfo {
-  family: string;
-  shade: string;
-  tone: string;
-  rgb: number[];
 }
 
 interface Palettes {
@@ -48,11 +32,10 @@ interface Palettes {
 
 class PaletteDescriptionService {
   async generateDescription(
-    skin: SkinInfo,
-    hair: HairInfo ,
+    season: string,
     palettes: Palettes
   ): Promise<PaletteDescriptionResponse> {
-    const prompt = await this.buildPrompt(skin, hair, palettes);
+    const prompt = await this.buildPrompt(season, palettes);
 
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -82,12 +65,11 @@ class PaletteDescriptionService {
     }
 
     const cleanContent = jsonMatch[0];
-    
+
     const parsed: PaletteDescriptionResponse = JSON.parse(cleanContent);
 
     await Description.create({
-      skin,
-      hair,
+      season,
       palettes,
       response: parsed,
     });
@@ -96,51 +78,42 @@ class PaletteDescriptionService {
   }
 
   private async buildPrompt(
-    skin: SkinInfo,
-    hair: HairInfo,
+    season: string,
     palettes: Palettes
   ): Promise<string> {
     return `
-شما یک کارشناس مد و رنگ‌شناسی هستید.
-
-با توجه به مشخصات پوست و مو و پالت‌های رنگی زیر، لطفاً برای هر دسته (لباس، آرایش چشم، آرایش صورت شامل رژگونه، کانتور و هایلایتر، رژ لب و جواهرات) یک یا دو جمله کوتاه و دوستانه بنویسید که چطور این رنگ‌ها با پوست هماهنگ‌اند و چطور می‌توان از آن‌ها در استایل و آرایش استفاده کرد.
-
-اطلاعات پوست:
-- نوع رنگ پوست: "${skin.tone}"
-- تون رنگ پوست: "${skin.undertone}"
-- شدت رنگ پوست: "${skin.shade}"
-- مقدار RGB: ${JSON.stringify(skin.rgb)}
-
-اطلاعات مو:
-- خانواده رنگ مو: "${hair?.family ?? "نامشخص"}"
-- شدت رنگ مو: "${hair?.shade ?? "نامشخص"}"
-- تون رنگ مو: "${hair?.tone ?? "نامشخص"}"
-- مقدار RGB: ${hair ? JSON.stringify(hair.rgb) : "نامشخص"}
-
-پالت‌های رنگی پیشنهادی:
-
-لباس: ${JSON.stringify(palettes.clothing)}
-آرایش چشم: ${JSON.stringify(palettes.eye_makeup)}
-آرایش صورت:
-  رژگونه: ${JSON.stringify(palettes.makeup.blush)}
-  کانتور: ${JSON.stringify(palettes.makeup.contour)}
-  هایلایتر: ${JSON.stringify(palettes.makeup.highlighter)}
-رژ لب: ${JSON.stringify(palettes.lipstick)}
-جواهرات: ${JSON.stringify(palettes.jewelry)}
-
-🔹 لطفاً فقط یک JSON معتبر و کامل با ساختار زیر خروجی بده، بدون هیچ متن اضافی:
-
-{
-  "tone_description": "یک جمله کوتاه و صمیمی درباره نوع رنگ پوست",
-  "palette_type": "گرم | سرد | خنثی",
-  "clothing": "توضیح کوتاه درباره پالت لباس",
-  "eye_makeup": "توضیح کوتاه درباره پالت آرایش چشم",
-  "makeup": "توضیح کوتاه درباره پالت آرایش صورت (رژگونه، کانتور و هایلایتر)",
-  "lipstick": "توضیح کوتاه درباره پالت رژ لب",
-  "jewelry": "توضیح کوتاه درباره پالت جواهرات"
-}
-`;
+  شما یک کارشناس مد و رنگ‌شناسی هستید.
+  
+  فصل رنگ‌شناسی "${season}" شامل ویژگی‌هایی مانند تون رنگ پوست، شدت رنگ و شفافیت رنگ‌ها است که بر انتخاب رنگ‌های مناسب لباس و آرایش تأثیر می‌گذارد. لطفاً ابتدا یک توضیح کوتاه و واضح درباره ویژگی‌های کلی این فصل رنگ‌شناسی ارائه دهید.
+  
+  سپس، با توجه به پالت‌های رنگی زیر، برای هر دسته (لباس، آرایش چشم، آرایش صورت شامل رژگونه، کانتور و هایلایتر، رژ لب و جواهرات) یک یا دو جمله کوتاه و دوستانه بنویسید که چطور این رنگ‌ها با فصل رنگ هماهنگ‌اند و چطور می‌توان از آن‌ها در استایل و آرایش استفاده کرد.
+  
+  پالت‌های رنگی پیشنهادی:
+  
+  لباس: ${JSON.stringify(palettes.clothing)}
+  آرایش چشم: ${JSON.stringify(palettes.eye_makeup)}
+  آرایش صورت:
+    رژگونه: ${JSON.stringify(palettes.makeup.blush)}
+    کانتور: ${JSON.stringify(palettes.makeup.contour)}
+    هایلایتر: ${JSON.stringify(palettes.makeup.highlighter)}
+  رژ لب: ${JSON.stringify(palettes.lipstick)}
+  جواهرات: ${JSON.stringify(palettes.jewelry)}
+  
+  🔹 لطفاً فقط یک JSON معتبر و کامل با ساختار زیر خروجی بده، بدون هیچ متن اضافی:
+  
+  {
+    "tone_description": "یک جمله کوتاه و صمیمی درباره فصل رنگ‌شناسی و ویژگی‌های آن",
+    "palette_type": "گرم | سرد | خنثی",
+    "clothing": "توضیح کوتاه درباره پالت لباس",
+    "eye_makeup": "توضیح کوتاه درباره پالت آرایش چشم",
+    "makeup": "توضیح کوتاه درباره پالت آرایش صورت (رژگونه، کانتور و هایلایتر)",
+    "lipstick": "توضیح کوتاه درباره پالت رژ لب",
+    "jewelry": "توضیح کوتاه درباره پالت جواهرات",
+    "season": "یک توضیح حدود یک پاراگراف راجع به فصل رنگ‌شناسی"
   }
+    `;
+  }
+  
 }
 
 export default new PaletteDescriptionService();
