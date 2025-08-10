@@ -3,18 +3,18 @@ import { Season } from "./types/types";
 
 export function getClothingColors(season: Season): string[] {
   const clothing: Record<Season, string[]> = {
-    "Bright Spring": ["#FFA94D", "#FFD93B", "#FF6B6B", "#4ECDC4", "#38A3A5"],
-    "Light Spring": ["#FFD8A8", "#FFE066", "#FFB3B3", "#9AE3D4", "#B5E48C"],
-    "Warm Spring": ["#F6A85E", "#FFD166", "#E56B6F", "#6BCB77", "#4D908E"],
-    "Cool Summer": ["#A2C7E5", "#B5B8E3", "#C9BBCF", "#9BB7D4", "#94B4C2"],
-    "Light Summer": ["#C5DFF8", "#D8E2DC", "#BDE0FE", "#C8B6FF", "#B8E0D2"],
-    "Soft Summer": ["#A8B6BF", "#B1A7A6", "#9D9FAB", "#91A6A6", "#9CBFA7"],
-    "Soft Autumn": ["#CBB682", "#B08968", "#DDB892", "#B5825D", "#997B66"],
-    "Warm Autumn": ["#A47C48", "#C97C5D", "#D9AE61", "#A47148", "#B5651D"],
-    "Deep Autumn": ["#704214", "#8B5E3C", "#A97155", "#8B6F47", "#6F4E37"],
-    "Cool Winter": ["#3C4F76", "#536878", "#4B4453", "#2C2E43", "#3E4C59"],
-    "Bright Winter": ["#FF595E", "#FFCA3A", "#8AC926", "#1982C4", "#6A4C93"],
-    "Deep Winter": ["#1B263B", "#0D1B2A", "#415A77", "#2E4057", "#3D2C2E"],
+    "Bright Spring": ["#FF6F61", "#FFD23F", "#40E0D0", "#7BC950", "#FF8C69"],
+    "Light Spring": ["#FFD8B1", "#FFF2B2", "#B8E3C0", "##A7D8F0", "#F6B5C0"],
+    "Warm Spring": ["#DAA520", "#FF7F50", "#40C5A0", "#FF6347", "#7BB661"],
+    "Cool Summer": ["#A9C6EA", "#D8A1C4", "#BCA9E8", "#7C8CA1", "#A9E0DC"],
+    "Light Summer": ["#F6D1D1", "#B7D7E8", "#D6C1E8", "#BFE3DC", "#C8CED3"],
+    "Soft Summer": ["#C9A9A6", "#7B9EAD", "#B6A0B6", "#A3B9A2", "#B3A28E"],
+    "Soft Autumn": ["#D4A59A", "#A8B29E", "#B49782", "#BFAE77", "#8B5E3C"],
+    "Warm Autumn": ["#CC5500", "#D4A017", "#808000", "#E2725B", "#5C4033"],
+    "Deep Autumn": ["#014D4E", "#4A2C2A", "#A07840", "#2E4600", "#8B3220"],
+    "Cool Winter": ["#A7C7E7", "#0A3D62", "#36454F", "#2C2E43", "#FFFFFF"],
+    "Bright Winter": ["#005BFF", "#D2042D", "#FFFFFF", "#0A0A0A", "#FF007F"],
+    "Deep Winter": ["#003153", "#800020", "#333333", "#046307", "#FFFFFF"],
   };
 
   let palette = clothing[season];
@@ -26,7 +26,6 @@ export function getClothingColors(season: Season): string[] {
 
   return palette;
 }
-
 
 // import chroma from "chroma-js";
 // import { Season, Shade, HairInput } from "./types/types";
@@ -67,14 +66,14 @@ export function getClothingColors(season: Season): string[] {
 //         "#121E3A", // Peacock (Totême)
 //       ],
 //     };
-  
+
 //     let palette = clothing[season];
-  
+
 //     // Adjust for hair color
 //     if (hair) {
 //       const hairColor = chroma(hair.rgb);
 //       palette = palette.map(c => chroma.mix(c, hairColor, 0.05, "lab").hex());
 //     }
-  
+
 //     return palette;
 //   }
