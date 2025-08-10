@@ -3,11 +3,7 @@ import chroma from "chroma-js";
 type Undertone = "warm" | "cool" | "neutral" | "olive";
 type Value = "very light" | "light" | "medium" | "medium-dark" | "dark" | "deep";
 type ChromaLevel = "very bright" | "bright" | "medium" | "soft" | "muted";
-type Season =
-  | "Bright Spring" | "Warm Spring" | "Light Spring"
-  | "Light Summer"  | "Cool Summer" | "Soft Summer"
-  | "Bright Winter" | "Cool Winter" | "Deep Winter"
-  | "Deep Autumn"   | "Warm Autumn" | "Soft Autumn";
+type Season = "Bright Spring" | "Warm Spring" | "Light Spring" | "Light Summer" | "Cool Summer" | "Soft Summer" | "Bright Winter" | "Cool Winter" | "Deep Winter" | "Deep Autumn" | "Warm Autumn" | "Soft Autumn";
 
 interface ColorAnalysis {
   undertone: Undertone;
@@ -16,11 +12,7 @@ interface ColorAnalysis {
   season: Season;
 }
 
-export function analyzePersonalColors(
-  skinRgb: [number, number, number],
-  hairRgb: [number, number, number],
-  eyeRgb: [number, number, number]
-): ColorAnalysis {
+export function analyzePersonalColors(skinRgb: [number, number, number], hairRgb: [number, number, number], eyeRgb: [number, number, number]): ColorAnalysis {
   const weights = { skin: 0.5, hair: 0.3, eyes: 0.2 };
 
   const thresholds = {
@@ -28,18 +20,18 @@ export function analyzePersonalColors(
       veryLight: { l: 82, contrast: 36 },
       light: { l: 68, contrast: 40 },
       medium: { l: 52, contrast: 46 },
-      dark: { l: 0, contrast: 32 }
+      dark: { l: 0, contrast: 32 },
     },
     chroma: {
       veryBright: 42,
       bright: 30,
       medium: 18,
-      soft: 8
+      soft: 8,
     },
     clarityBoost: {
       minDifference: 8,
-      factor: 0.15
-    }
+      factor: 0.15,
+    },
   };
 
   // ====== STEP 1 — Analyze individual features ======
@@ -50,8 +42,8 @@ export function analyzePersonalColors(
   // ====== STEP 2 — Undertone logic ======
   let undertone: Undertone = skin.undertone;
   if (undertone === "neutral") {
-    const warmCount = [hair.tone, eyes.tone].filter(t => t === "warm").length;
-    const coolCount = [hair.tone, eyes.tone].filter(t => t === "cool").length;
+    const warmCount = [hair.tone, eyes.tone].filter((t) => t === "warm").length;
+    const coolCount = [hair.tone, eyes.tone].filter((t) => t === "cool").length;
     if (warmCount > coolCount) undertone = "warm";
     else if (coolCount > warmCount) undertone = "cool";
   }
@@ -61,29 +53,21 @@ export function analyzePersonalColors(
   const hairL = chroma(hairRgb).get("lab.l");
   const eyeL = chroma(eyeRgb).get("lab.l");
 
-  const avgL = (skinL * weights.skin) + (hairL * weights.hair) + (eyeL * weights.eyes);
-  const contrast = Math.max(
-    Math.abs(skinL - hairL),
-    Math.abs(skinL - eyeL),
-    Math.abs(hairL - eyeL)
-  );
+  const avgL = skinL * weights.skin + hairL * weights.hair + eyeL * weights.eyes;
+  const contrast = Math.max(Math.abs(skinL - hairL), Math.abs(skinL - eyeL), Math.abs(hairL - eyeL));
 
   let value: Value;
-  if (avgL >= thresholds.value.veryLight.l)
-    value = contrast >= thresholds.value.veryLight.contrast ? "medium" : "very light";
-  else if (avgL >= thresholds.value.light.l)
-    value = contrast >= thresholds.value.light.contrast ? "medium-dark" : "light";
-  else if (avgL >= thresholds.value.medium.l)
-    value = contrast >= thresholds.value.medium.contrast ? "dark" : "medium";
-  else
-    value = contrast >= thresholds.value.dark.contrast ? "deep" : "dark";
+  if (avgL >= thresholds.value.veryLight.l) value = contrast >= thresholds.value.veryLight.contrast ? "medium" : "very light";
+  else if (avgL >= thresholds.value.light.l) value = contrast >= thresholds.value.light.contrast ? "medium-dark" : "light";
+  else if (avgL >= thresholds.value.medium.l) value = contrast >= thresholds.value.medium.contrast ? "dark" : "medium";
+  else value = contrast >= thresholds.value.dark.contrast ? "deep" : "dark";
 
   // ====== STEP 4 — Chroma & clarity ======
   const skinC = chroma(skinRgb).get("lch.c");
   const hairC = chroma(hairRgb).get("lch.c");
   const eyeC = chroma(eyeRgb).get("lch.c");
 
-  let avgC = (skinC * weights.skin) + (hairC * weights.hair) + (eyeC * weights.eyes);
+  let avgC = skinC * weights.skin + hairC * weights.hair + eyeC * weights.eyes;
 
   // Eye clarity boost (scaled)
   if (eyeC > avgC + thresholds.clarityBoost.minDifference) {
@@ -104,14 +88,7 @@ export function analyzePersonalColors(
   return { undertone, value, chroma: chromaValue, season };
 }
 
-
-function getSeasonFromAttributes(
-  ud: Undertone,
-  val: Value,
-  chromaLevel: ChromaLevel,
-  avgChromaNumeric: number,
-  contrast: number
-): Season {
+function getSeasonFromAttributes(ud: Undertone, val: Value, chromaLevel: ChromaLevel, avgChromaNumeric: number, contrast: number): Season {
   // Helper: categorize value
   const isLight = val === "very light" || val === "light";
   const isMedium = val === "medium" || val === "medium-dark";
@@ -137,30 +114,27 @@ function getSeasonFromAttributes(
   }
 
   // Map of undertone → value depth → chroma brightness → season
-  const seasonMap: Record<
-    Undertone,
-    Record<"light" | "medium" | "deep", Record<"bright" | "muted", Season>>
-  > = {
+  const seasonMap: Record<Undertone, Record<"light" | "medium" | "deep", Record<"bright" | "muted", Season>>> = {
     warm: {
       light: { bright: "Bright Spring", muted: "Light Spring" },
       medium: { bright: "Warm Autumn", muted: "Soft Autumn" },
-      deep: { bright: "Deep Autumn", muted: "Soft Autumn" }
+      deep: { bright: "Deep Autumn", muted: "Soft Autumn" },
     },
     cool: {
       light: { bright: "Light Summer", muted: "Cool Summer" },
       medium: { bright: "Bright Winter", muted: "Soft Summer" },
-      deep: { bright: "Deep Winter", muted: "Cool Summer" }
+      deep: { bright: "Deep Winter", muted: "Cool Summer" },
     },
     neutral: {
       light: { bright: "Bright Spring", muted: "Soft Summer" },
       medium: { bright: "Bright Winter", muted: "Soft Autumn" },
-      deep: { bright: "Deep Winter", muted: "Soft Autumn" }
+      deep: { bright: "Deep Winter", muted: "Soft Autumn" },
     },
     olive: {
       light: { bright: "Bright Spring", muted: "Soft Summer" }, // fallback to neutral light
       medium: { bright: "Bright Winter", muted: "Soft Autumn" }, // fallback to neutral medium
-      deep: { bright: "Deep Winter", muted: "Soft Autumn" } // fallback to neutral deep
-    }
+      deep: { bright: "Deep Winter", muted: "Soft Autumn" }, // fallback to neutral deep
+    },
   };
 
   // Determine depth key
@@ -169,20 +143,13 @@ function getSeasonFromAttributes(
   else if (isDeep) depthKey = "deep";
 
   // Special case: warm deep + muted + low chroma + low contrast → softer autumn
-  if (
-    undertone === "warm" &&
-    depthKey === "deep" &&
-    isSoftOrMuted &&
-    isLowChroma &&
-    lowContrast
-  ) {
+  if (undertone === "warm" && depthKey === "deep" && isSoftOrMuted && isLowChroma && lowContrast) {
     return "Soft Autumn";
   }
 
   // Pick from lookup table
   return seasonMap[undertone][depthKey][isBright ? "bright" : "muted"];
 }
-
 
 function analyzeSkin(rgb: [number, number, number]): { undertone: Undertone } {
   const c = chroma(rgb);
