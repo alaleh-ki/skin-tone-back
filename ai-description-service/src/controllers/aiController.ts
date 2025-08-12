@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import { Request, Response } from "express";
 import PaletteDescriptionService from "../services/aiService";
 
-dotenv.config();
 
 class PaletteDescriptionController {
   async describePalette(req: Request, res: Response) {

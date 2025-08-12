@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 import axios from "axios";
 import Description from "../models/aiModel";
 
-dotenv.config();
+dotenv.config({ quiet: true });
+
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");

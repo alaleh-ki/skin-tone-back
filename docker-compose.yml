@@ -1,5 +1,13 @@
 version: "3.8"
 services:
+  gateway-api:
+    build: ./gateway-api
+    ports:
+      - "8000:8000"
+  ai-description-service:
+    build: ./ai-description-service
+    ports:
+      - "5001:5000"
   color-analysis-service:
     build: ./color-analysis-service
     ports:
@@ -8,11 +16,4 @@ services:
     build: ./palette-service
     ports:
       - "5003:5000"
-  ai-description-service:
-    build: ./ai-description-service
-    ports:
-      - "5001:5000"
-  gateway-api:
-    build: ./gateway-api
-    ports:
-      - "8000:8000"
+
