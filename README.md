@@ -12,7 +12,6 @@ It consists of five services, all containerized with Docker and orchestrated usi
 | -------------------------- | ---- | ---------------------------------------------------------------- |
 | **color-analysis-service** | 5002 | Analyzes image colors and detects skin tone                      |
 | **palette-service**        | 5003 | Generates clothing/makeup color palettes based on skin/hair tone |
-| **jewelry-service**        | 5004 | Suggests jewelry colors based on skin/hair tones                 |
 | **ai-description-service** | 5001 | Generates descriptive text for skin tones & palettes using AI    |
 | **gateway-api**            | 8000 | Acts as the API gateway for all services                         |
 
@@ -59,7 +58,6 @@ This command will:
 - **Gateway API:** [http://localhost:8000](http://localhost:8000)
 - **Color Analysis Service:** [http://localhost:5002](http://localhost:5002)
 - **Palette Service:** [http://localhost:5003](http://localhost:5003)
-- **Jewelry Service:** [http://localhost:5004](http://localhost:5004)
 - **AI Description Service:** [http://localhost:5001](http://localhost:5001)
 
 ### 4️⃣ Stop all services
@@ -76,7 +74,6 @@ docker-compose down
 .
 ├── color-analysis-service/   # Analyzes colors and detects skin tone from images
 ├── palette-service/          # Generates clothing/makeup palettes
-├── jewelry-service/          # Suggests matching jewelry colors
 ├── ai-description-service/   # AI-generated descriptive text
 ├── gateway-api/              # API gateway for all services
 └── docker-compose.yml

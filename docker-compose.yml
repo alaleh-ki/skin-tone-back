@@ -8,10 +8,6 @@ services:
     build: ./palette-service
     ports:
       - "5003:5000"
-  jewelry-service:
-    build: ./jewelry-service
-    ports:
-      - "5004:5000"
   ai-description-service:
     build: ./ai-description-service
     ports:
