@@ -8,7 +8,7 @@ export const describePaletteProxy = async (req: Request, res: Response) => {
     const response = await axios.post(ai_description_SERVICE_URL, req.body);
     res.json(response.data);
   } catch (error: any) {
-    console.error("Error calling skin-tone-service:", error);
+    console.error("Error calling ai_description-service:", error);
     res.status(500).json({ error: "Failed to recommend color palette" });
   }
 };
