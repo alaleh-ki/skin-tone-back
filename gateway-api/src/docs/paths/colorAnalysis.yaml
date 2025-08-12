@@ -1,0 +1,171 @@
+﻿paths:
+  /color-analysis/analyze:
+    post:
+      summary: Analyze skin tone, hair color, and eye color and recommend color palette and AI-generated recommendations.
+      description: |
+        Returns a detailed analysis of skin undertone, color palette, and AI-generated recommendations.
+        - RGB values must be between `[0, 255]`.
+        - All fields are required.
+      tags: [Color Analysis]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [skin_rgb, hair_rgb, eye_rgb]
+              properties:
+                skin_rgb:
+                  type: array
+                  minItems: 3
+                  maxItems: 3
+                  items:
+                    type: integer
+                    minimum: 0
+                    maximum: 255
+                  example: [248, 196, 180]
+                  description: RGB values for skin tone (R, G, B)
+                hair_rgb:
+                  type: array
+                  minItems: 3
+                  maxItems: 3
+                  items:
+                    type: integer
+                    minimum: 0
+                    maximum: 255
+                  example: [78, 78, 28]
+                  description: RGB values for hair color (R, G, B)
+                eye_rgb:
+                  type: array
+                  minItems: 3
+                  maxItems: 3
+                  items:
+                    type: integer
+                    minimum: 0
+                    maximum: 255
+                  example: [109, 100, 74]
+                  description: RGB values for eye color (R, G, B)
+      responses:
+        200:
+          description: Successful analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  skinTone:
+                    type: object
+                    properties:
+                      undertone:
+                        type: string
+                        example: "warm"
+                        description: Skin undertone (warm/cool/neutral)
+                      value:
+                        type: string
+                        example: "dark"
+                        description: Lightness/darkness of skin
+                      chroma:
+                        type: string
+                        example: "medium"
+                        description: Muted/clear intensity
+                      season:
+                        type: string
+                        example: "Soft Autumn"
+                        description: Color analysis season
+                  colorPalette:
+                    type: object
+                    properties:
+                      clothing:
+                        type: array
+                        items:
+                          type: string
+                          format: hex-color
+                        example: ["#D4A59A", "#A8B29E", "#B49782"]
+                        description: Recommended clothing colors
+                      eye_makeup:
+                        type: array
+                        items:
+                          type: string
+                          format: hex-color
+                        example: ["#CBB682", "#B08968", "#DDB892"]
+                        description: Recommended eye makeup colors
+                      makeup:
+                        type: object
+                        properties:
+                          blush:
+                            type: array
+                            items:
+                              type: string
+                              format: hex-color
+                            example: ["#D4A373", "#C38370", "#B5655E"]
+                          contour:
+                            type: array
+                            items:
+                              type: string
+                              format: hex-color
+                            example: ["#8C6D52", "#7A5C48", "#6B4F3B"]
+                          highlighter:
+                            type: array
+                            items:
+                              type: string
+                              format: hex-color
+                            example: ["#E6B84C", "#D4A017", "#C1923E"]
+                      lipstick:
+                        type: array
+                        items:
+                          type: string
+                          format: hex-color
+                        example: ["#CBB682", "#B08968", "#DDB892"]
+                      jewelry:
+                        type: array
+                        items:
+                          type: string
+                          format: hex-color
+                        example: ["#D4AF37", "#FFD700", "#B8860B"]
+                  aiDescription:
+                    type: object
+                    properties:
+                      tone_description:
+                        type: string
+                        example: "فصل رنگ‌شناسی Soft Autumn به خاطر رنگ‌های گرم، ملایم و ماتش شناخته می‌شود."
+                      palette_type:
+                        type: string
+                        example: "گرم"
+                      clothing:
+                        type: string
+                        example: "پالت لباس با رنگ‌های گرم و خاکی، کاملاً با حال و هوای ملایم و طبیعی Soft Autumn هماهنگ است."
+                      eye_makeup:
+                        type: string
+                        example: "رنگ‌های طبیعی و خاکی این پالت، چشمان شما را به زیبایی و بدون اغراق جلوه می‌دهند."
+                      makeup:
+                        type: string
+                        example: "رژگونه‌های گرم و خاکی، همراه با کانتور و هایلایتری با رنگ‌های طلایی، برای ایجاد ظاهری طبیعی و هماهنگ با فصل عالی هستند."
+                      lipstick:
+                        type: string
+                        example: "رنگ‌های گرم و ملایم این پالت رژ لب، لب‌های شما را به زیبایی و دلنشینی به نمایش می‌گذارند."
+                      jewelry:
+                        type: string
+                        example: "جواهرات با رنگ‌های طلایی و برنزی، گرما و درخشندگی به استایل شما می‌بخشند و با فصل رنگ‌شناسی هماهنگ‌اند."
+                      season:
+                        type: string
+                        example: "فصل رنگ‌شناسی Soft Autumn با رنگ‌های گرم و خاکی تعریف می‌شود که درخششی ملایم و طبیعی به ظاهر شما می‌بخشند."
+        400:
+          description: Invalid RGB values or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "RGB values must be between 0 and 255."
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Analysis failed due to server error."
