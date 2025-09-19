@@ -1,23 +1,23 @@
 {
-    "name": "your-project",
-    "scripts": {
-        "standardize": "node scripts/standardize.js",
-        "dev": "concurrently \"npm:dev-*\"",
-        "dev-gateway": "npm run dev --workspace=gateway-api",
-        "dev-ai": "npm run dev --workspace=ai-description-service",
-        "dev-color": "npm run dev --workspace=color-analysis-service",
-        "dev-palette": "npm run dev --workspace=palette-service",
-        "compose:up": "docker-compose up -d --build",
-        "compose:down": "docker-compose down",
-        "build": "npm run build --workspaces"
-    },
-    "workspaces": [
-        "ai-description-service",
-        "color-analysis-service",
-        "gateway-api",
-        "palette-service"
-    ],
-    "devDependencies": {
-        "concurrently": "^8.2.2"
-    }
+  "name": "your-project",
+  "scripts": {
+    "sync": "node scripts/sync-project.js",
+    "dev": "concurrently \"npm:dev-*\"",
+    "dev-gateway": "npm run dev --workspace=gateway-api",
+    "dev-ai": "npm run dev --workspace=ai-description-service",
+    "dev-color": "npm run dev --workspace=color-analysis-service",
+    "dev-palette": "npm run dev --workspace=palette-service",
+    "compose:up": "docker-compose up -d --build",
+    "compose:down": "docker-compose down",
+    "build": "npm run build --workspaces"
+  },
+  "workspaces": [
+    "ai-description-service",
+    "color-analysis-service",
+    "gateway-api",
+    "palette-service"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }
