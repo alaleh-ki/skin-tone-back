@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import axios from "axios";
 
-const COLOR_PALETTE_SERVICE_URL = "http://palette-service:5003/recommend";
+const COLOR_PALETTE_SERVICE_URL = process.env.COLOR_PALETTE_SERVICE_URL || "http://palette-service:5000/recommend";
 
 export const analyzeColorPaletteProxy = async (req: Request, res: Response) => {
   try {

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import axios from "axios";
 
-const COLOR_ANALYSIS_SERVICE_URL =  process.env.COLOR_ANALYSIS_SERVICE_URL || "http://color-analysis-service:5002/analyze";
-const COLOR_PALETTE_SERVICE_URL = process.env.COLOR_PALETTE_SERVICE_URL || "http://palette-service:5003/recommend";
-const AI_DESCRIPTION_SERVICE_URL = process.env.AI_DESCRIPTION_SERVICE_URL || "http://ai-description-service:5001/describe";
+const COLOR_ANALYSIS_SERVICE_URL = process.env.COLOR_ANALYSIS_SERVICE_URL || "http://color-analysis-service:5000/analyze";
+const COLOR_PALETTE_SERVICE_URL = process.env.COLOR_PALETTE_SERVICE_URL || "http://palette-service:5000/recommend";
+const AI_DESCRIPTION_SERVICE_URL = process.env.AI_DESCRIPTION_SERVICE_URL || "http://ai-description-service:5000/describe";
 
 export const colorAnalysisProxy = async (req: Request, res: Response) => {
   try {

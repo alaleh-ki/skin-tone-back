@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import axios from "axios";
 
-const ai_description_SERVICE_URL = "http://ai-description-service:5001/describe";
+const ai_description_SERVICE_URL = process.env.AI_DESCRIPTION_SERVICE_URL || "http://ai-description-service:5000/describe";
 
 export const describePaletteProxy = async (req: Request, res: Response) => {
   try {
