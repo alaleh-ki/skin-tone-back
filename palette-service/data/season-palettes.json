@@ -1,0 +1,566 @@
+[
+  {
+    "_id": "68cd82af8bfb669968b22a2e",
+    "season": "Bright Spring",
+    "__v": 0,
+    "clothing": [
+      "#FF6F61",
+      "#FFD23F",
+      "#40E0D0",
+      "#7BC950",
+      "#FF8C69"
+    ],
+    "eye_makeup": [
+      "#FFA94D",
+      "#FFD93B",
+      "#FF6B6B",
+      "#4ED6C9",
+      "#38A3A5"
+    ],
+    "lipstick": [
+      "#FF6B6B",
+      "#FF9E8E",
+      "#FFD93B",
+      "#F7A88B",
+      "#E56B6F"
+    ],
+    "makeup": {
+      "blush": [
+        "#FF8577",
+        "#FFB07C",
+        "#FF9999",
+        "#FF6F61"
+      ],
+      "contour": [
+        "#C49A6C",
+        "#B07D5C",
+        "#A97457",
+        "#8B5E3C"
+      ],
+      "highlighter": [
+        "#FFF4C2",
+        "#FFE9A3",
+        "#FFE7B5",
+        "#FCE1B3"
+      ],
+      "_id": "68cd82afb365c78e402b963a"
+    }
+  },
+  {
+    "_id": "68cd82af8bfb669968b22a2f",
+    "season": "Warm Spring",
+    "__v": 0,
+    "clothing": [
+      "#DAA520",
+      "#FF7F50",
+      "#40C5A0",
+      "#FF6347",
+      "#7BB661"
+    ],
+    "eye_makeup": [
+      "#F6A85E",
+      "#FFD166",
+      "#E56B6F",
+      "#7AB77A",
+      "#4D908E"
+    ],
+    "lipstick": [
+      "#F6A85E",
+      "#FFD166",
+      "#E56B6F",
+      "#FDA172",
+      "#C46210"
+    ],
+    "makeup": {
+      "blush": [
+        "#F6A85E",
+        "#FF9966",
+        "#E86C5D",
+        "#F08080"
+      ],
+      "contour": [
+        "#B17A4B",
+        "#A56B3D",
+        "#9C6335",
+        "#8B5A2B"
+      ],
+      "highlighter": [
+        "#FFD38E",
+        "#F5C469",
+        "#E9C46A",
+        "#E6B873"
+      ],
+      "_id": "68cd82afb365c78e402b963e"
+    }
+  },
+  {
+    "_id": "68cd82af8bfb669968b22a30",
+    "season": "Light Spring",
+    "__v": 0,
+    "clothing": [
+      "#FFD8B1",
+      "#FFF2B2",
+      "#B8E3C0",
+      "#A7D8F0",
+      "#F6B5C0"
+    ],
+    "eye_makeup": [
+      "#FFD8A8",
+      "#FFE066",
+      "#FFB3B3",
+      "#9AE3D4",
+      "#B5E48C"
+    ],
+    "lipstick": [
+      "#FFD8A8",
+      "#FFE066",
+      "#FFB3B3",
+      "#FAD6A5",
+      "#FFABAB"
+    ],
+    "makeup": {
+      "blush": [
+        "#FFB3A7",
+        "#FFD1A1",
+        "#FFC1B6",
+        "#F7A88B"
+      ],
+      "contour": [
+        "#CFA982",
+        "#C39977",
+        "#B88B6B",
+        "#AA7E5A"
+      ],
+      "highlighter": [
+        "#FFFACD",
+        "#FFEFC1",
+        "#FFE4B5",
+        "#FBE8CC"
+      ],
+      "_id": "68cd82afb365c78e402b9640"
+    }
+  },
+  {
+    "_id": "68cd82af8bfb669968b22a31",
+    "season": "Light Summer",
+    "__v": 0,
+    "clothing": [
+      "#F6D1D1",
+      "#B7D7E8",
+      "#D6C1E8",
+      "#BFE3DC",
+      "#C8CED3"
+    ],
+    "eye_makeup": [
+      "#C5DFF8",
+      "#D8E2DC",
+      "#BDE0FE",
+      "#C8B6FF",
+      "#B8E0D2"
+    ],
+    "lipstick": [
+      "#C5DFF8",
+      "#D8E2DC",
+      "#BDE0FE",
+      "#FFB7C5",
+      "#D8BFD8"
+    ],
+    "makeup": {
+      "blush": [
+        "#F4C2C2",
+        "#FFB6C1",
+        "#EEC9D2",
+        "#F3D1DC"
+      ],
+      "contour": [
+        "#B4A59B",
+        "#A49288",
+        "#938176",
+        "#857568"
+      ],
+      "highlighter": [
+        "#F9F6EE",
+        "#FAEBD7",
+        "#EDE6F2",
+        "#F5E9EB"
+      ],
+      "_id": "68cd82afb365c78e402b9642"
+    }
+  },
+  {
+    "_id": "68cd82af8bfb669968b22a32",
+    "season": "Cool Summer",
+    "__v": 0,
+    "clothing": [
+      "#A9C6EA",
+      "#D8A1C4",
+      "#BCA9E8",
+      "#7C8CA1",
+      "#A9E0DC"
+    ],
+    "eye_makeup": [
+      "#A2C7E5",
+      "#B5B8E3",
+      "#C9BBCF",
+      "#8FA6B2",
+      "#94B4C2"
+    ],
+    "lipstick": [
+      "#C9BBCF",
+      "#B5B8E3",
+      "#A2C7E5",
+      "#DB7093",
+      "#9370DB"
+    ],
+    "makeup": {
+      "blush": [
+        "#F6A6B2",
+        "#E4A0D3",
+        "#FBB7C0",
+        "#D28EB0"
+      ],
+      "contour": [
+        "#A48C86",
+        "#947C76",
+        "#7E6862",
+        "#6B5651"
+      ],
+      "highlighter": [
+        "#E6E6FA",
+        "#F0F8FF",
+        "#DDE3F0",
+        "#E5E4E2"
+      ],
+      "_id": "68cd82afb365c78e402b9644"
+    }
+  },
+  {
+    "_id": "68cd82af8bfb669968b22a33",
+    "season": "Soft Summer",
+    "__v": 0,
+    "clothing": [
+      "#C9A9A6",
+      "#7B9EAD",
+      "#B6A0B6",
+      "#A3B9A2",
+      "#B3A28E"
+    ],
+    "eye_makeup": [
+      "#A8B6BF",
+      "#B1A7A6",
+      "#8D92A6",
+      "#91A6A6",
+      "#9CBFA7"
+    ],
+    "lipstick": [
+      "#A8B6BF",
+      "#B1A7A6",
+      "#9D9FAB",
+      "#91A6A6",
+      "#9CBFA7"
+    ],
+    "makeup": {
+      "blush": [
+        "#C8A2C8",
+        "#BFA6A0",
+        "#D8BFD8",
+        "#B48E92"
+      ],
+      "contour": [
+        "#91857B",
+        "#7F726A",
+        "#6F645C",
+        "#5E534C"
+      ],
+      "highlighter": [
+        "#D8D8D8",
+        "#C0C0C0",
+        "#BEB6B6",
+        "#B3A9A9"
+      ],
+      "_id": "68cd82afb365c78e402b9646"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a34",
+    "season": "Bright Winter",
+    "__v": 0,
+    "clothing": [
+      "#005BFF",
+      "#D2042D",
+      "#FFFFFF",
+      "#0A0A0A",
+      "#FF007F"
+    ],
+    "eye_makeup": [
+      "#FF595E",
+      "#FFCA3A",
+      "#8AC926",
+      "#1982C4",
+      "#9B59B6"
+    ],
+    "lipstick": [
+      "#FF595E",
+      "#FFCA3A",
+      "#8AC926",
+      "#1982C4",
+      "#6A4C93"
+    ],
+    "makeup": {
+      "blush": [
+        "#FF4F6D",
+        "#E63946",
+        "#FF6F91",
+        "#FF4F81"
+      ],
+      "contour": [
+        "#3A3E5B",
+        "#2B2D42",
+        "#1E2137",
+        "#2C2E43"
+      ],
+      "highlighter": [
+        "#E6E6FA",
+        "#F0F8FF",
+        "#E0E6ED",
+        "#E5E4E2"
+      ],
+      "_id": "68cd82b0b365c78e402b9648"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a35",
+    "season": "Cool Winter",
+    "__v": 0,
+    "clothing": [
+      "#A7C7E7",
+      "#0A3D62",
+      "#36454F",
+      "#2C2E43",
+      "#FFFFFF"
+    ],
+    "eye_makeup": [
+      "#3C4F76",
+      "#536878",
+      "#4B4453",
+      "#2C2E43",
+      "#7F8FA6"
+    ],
+    "lipstick": [
+      "#3C4F76",
+      "#536878",
+      "#4B4453",
+      "#2C2E43",
+      "#3E4C59"
+    ],
+    "makeup": {
+      "blush": [
+        "#D36C87",
+        "#C8507E",
+        "#B03060",
+        "#A23B72"
+      ],
+      "contour": [
+        "#5C5470",
+        "#4B4E6D",
+        "#3D3A5A",
+        "#2C2E43"
+      ],
+      "highlighter": [
+        "#F0F8FF",
+        "#E6E6FA",
+        "#D8E9F0",
+        "#E5E4E2"
+      ],
+      "_id": "68cd82b0b365c78e402b964a"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a36",
+    "season": "Deep Winter",
+    "__v": 0,
+    "clothing": [
+      "#003153",
+      "#800020",
+      "#333333",
+      "#046307",
+      "#FFFFFF"
+    ],
+    "eye_makeup": [
+      "#1B263B",
+      "#0D1B2A",
+      "#415A77",
+      "#2E4057",
+      "#4B2C3F"
+    ],
+    "lipstick": [
+      "#1B263B",
+      "#0D1B2A",
+      "#415A77",
+      "#2E4057",
+      "#3D2C2E"
+    ],
+    "makeup": {
+      "blush": [
+        "#B11226",
+        "#9B1D36",
+        "#A50044",
+        "#8B104E"
+      ],
+      "contour": [
+        "#2E2E38",
+        "#1C1C24",
+        "#0F0F14",
+        "#1A120B"
+      ],
+      "highlighter": [
+        "#D8D8D8",
+        "#C0C0C0",
+        "#BEB6B6",
+        "#B3A9A9"
+      ],
+      "_id": "68cd82b0b365c78e402b964c"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a37",
+    "season": "Deep Autumn",
+    "__v": 0,
+    "clothing": [
+      "#014D4E",
+      "#4A2C2A",
+      "#A07840",
+      "#2E4600",
+      "#8B3220"
+    ],
+    "eye_makeup": [
+      "#704214",
+      "#8B5E3C",
+      "#A97155",
+      "#5C3A21",
+      "#6F4E37"
+    ],
+    "lipstick": [
+      "#704214",
+      "#8B5E3C",
+      "#A97155",
+      "#8B6F47",
+      "#6F4E37"
+    ],
+    "makeup": {
+      "blush": [
+        "#8B4726",
+        "#A14D3A",
+        "#9B3F2D",
+        "#7A3B28"
+      ],
+      "contour": [
+        "#5C4033",
+        "#4E342E",
+        "#3E2723",
+        "#2C1E17"
+      ],
+      "highlighter": [
+        "#E6B84C",
+        "#CFA15B",
+        "#D1A054",
+        "#B98A44"
+      ],
+      "_id": "68cd82b0b365c78e402b964e"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a38",
+    "season": "Warm Autumn",
+    "__v": 0,
+    "clothing": [
+      "#CC5500",
+      "#D4A017",
+      "#808000",
+      "#E2725B",
+      "#5C4033"
+    ],
+    "eye_makeup": [
+      "#A47C48",
+      "#C97C5D",
+      "#D9AE61",
+      "#8F5A29",
+      "#B5651D"
+    ],
+    "lipstick": [
+      "#A47C48",
+      "#C97C5D",
+      "#D9AE61",
+      "#A47148",
+      "#B5651D"
+    ],
+    "makeup": {
+      "blush": [
+        "#B86B4B",
+        "#D97B5B",
+        "#E27A3F",
+        "#A65E2E"
+      ],
+      "contour": [
+        "#6E4B2F",
+        "#5C4033",
+        "#4B3621",
+        "#3E2723"
+      ],
+      "highlighter": [
+        "#FFD38E",
+        "#E9C46A",
+        "#F5C469",
+        "#D4A55E"
+      ],
+      "_id": "68cd82b0b365c78e402b9650"
+    }
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a39",
+    "season": "Soft Autumn",
+    "__v": 0,
+    "clothing": [
+      "#D4A59A",
+      "#A8B29E",
+      "#B49782",
+      "#BFAE77",
+      "#8B5E3C"
+    ],
+    "eye_makeup": [
+      "#CBB682",
+      "#B08968",
+      "#DDB892",
+      "#A67B5B",
+      "#997B66"
+    ],
+    "lipstick": [
+      "#CBB682",
+      "#B08968",
+      "#DDB892",
+      "#B5825D",
+      "#997B66"
+    ],
+    "makeup": {
+      "blush": [
+        "#D4A373",
+        "#C38370",
+        "#B5655E",
+        "#A47148"
+      ],
+      "contour": [
+        "#8C6D52",
+        "#7A5C48",
+        "#6B4F3B",
+        "#5D3F2B"
+      ],
+      "highlighter": [
+        "#E6B84C",
+        "#D4A017",
+        "#C1923E",
+        "#B8860B"
+      ],
+      "_id": "68cd82b0b365c78e402b9652"
+    }
+  }
+]

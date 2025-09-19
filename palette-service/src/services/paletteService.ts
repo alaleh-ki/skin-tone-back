@@ -1,16 +1,22 @@
-import { getJewelryColors } from "./jewelry-service";
-import { getLipstickColors } from "./lipstick-service";
-import { getMakeupColors } from "./makeup-service";
-import { getEyeMakeupColors } from "./eye-makeup-service";
-import { getClothingColors } from "./clothing-service";
 import { Season, Undertone } from "./types/types";
+import { getSeasonPaletteBySeason, getJewelryByUndertone } from "../repositories/paletteRepository";
 
-export function generatePalette({ season, undertone }: { season: Season; undertone: Undertone }) {
+export async function generatePalette({ season, undertone }: { season: Season; undertone: Undertone }) {
+  const seasonDoc = await getSeasonPaletteBySeason(season);
+  if (!seasonDoc) {
+    throw new Error(`Season palette not found for '${season}'`);
+  }
+
+  const jewelryDoc = await getJewelryByUndertone(undertone);
+  if (!jewelryDoc) {
+    throw new Error(`Jewelry palette not found for undertone '${undertone}'`);
+  }
+
   return {
-    clothing: getClothingColors(season),
-    eye_makeup: getEyeMakeupColors(season),
-    makeup: getMakeupColors(season),
-    lipstick: getLipstickColors(season),
-    jewelry: getJewelryColors(undertone),
+    clothing: seasonDoc.clothing,
+    eye_makeup: seasonDoc.eye_makeup,
+    makeup: seasonDoc.makeup,
+    lipstick: seasonDoc.lipstick,
+    jewelry: jewelryDoc.jewelry,
   };
 }

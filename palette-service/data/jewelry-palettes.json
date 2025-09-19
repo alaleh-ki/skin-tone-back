@@ -1,0 +1,42 @@
+[
+  {
+    "_id": "68cd82b08bfb669968b22a3a",
+    "undertone": "warm",
+    "__v": 0,
+    "jewelry": [
+      "#D4AF37",
+      "#FFD700",
+      "#B8860B"
+    ]
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a3b",
+    "undertone": "cool",
+    "__v": 0,
+    "jewelry": [
+      "#C0C0C0",
+      "#E5E4E2",
+      "#A9A9A9"
+    ]
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a3c",
+    "undertone": "neutral",
+    "__v": 0,
+    "jewelry": [
+      "#C0C0C0",
+      "#E5E4E2",
+      "#A9A9A9"
+    ]
+  },
+  {
+    "_id": "68cd82b08bfb669968b22a3d",
+    "undertone": "olive",
+    "__v": 0,
+    "jewelry": [
+      "#B76E79",
+      "#E0BFB8",
+      "#CB9D9E"
+    ]
+  }
+]
