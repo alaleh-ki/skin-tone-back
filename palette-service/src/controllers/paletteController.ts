@@ -11,7 +11,7 @@ export const recommendPalette = async (req: Request, res: Response) => {
     const palettes = await generatePalette({ season, undertone });
     res.json(palettes);
   } catch (err: any) {
-    console.error(err?.message || err);
+    console.error("Error fetching palettes:", err?.message || err);
     res.status(500).json({ error: "Failed to fetch palettes" });
   }
 };
