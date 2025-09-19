@@ -25,14 +25,20 @@ graph LR
 
 ### 1. Environment Setup
 
-Create these files:
+Create these files (adjust hosts based on where Mongo/services run):
+
+- If using Docker for Mongo: use `mongodb://mongo:27017/...` (or your container name)
+- If using local Mongo on host: use `mongodb://localhost:27017/...`
 
 **`ai-description-service/.env`**
 
 ```env
 PORT=5000
 LANG=fa
+# Mongo inside Docker (container named `mongo`):
 MONGO_URI=mongodb://mongo:27017/skin_tone_app
+# Or local Mongo on host:
+# MONGO_URI=mongodb://localhost:27017/skin_tone_app
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -40,7 +46,21 @@ OPENAI_API_KEY=your_openai_api_key
 
 ```env
 PORT=5000
+# Mongo inside Docker (container named `mongo`):
 MONGO_URI=mongodb://mongo:27017/skin_tone_app
+# Or local Mongo on host:
+# MONGO_URI=mongodb://localhost:27017/skin_tone_app
+```
+
+Optional (only if overriding defaults when running locally without Docker):
+
+**`gateway-api` (env variables)**
+
+```bash
+# Point gateway to localhost services in local dev (not Docker):
+export COLOR_ANALYSIS_SERVICE_URL="http://localhost:5002/analyze"
+export COLOR_PALETTE_SERVICE_URL="http://localhost:5003/recommend"
+export AI_DESCRIPTION_SERVICE_URL="http://localhost:5001/describe"
 ```
 
 ### 2. Start Services
@@ -58,7 +78,7 @@ docker-compose exec palette-service npm run seed
 ### 4. Access Services
 
 - **API Gateway**: http://localhost:8000
-- **Swagger Docs**: http://localhost:8000/docs
+- **Swagger Docs**: http://localhost:8000/docs (generated via swagger-jsdoc in `gateway-api`)
 
 ## 🧑‍💻 Local Development
 
@@ -81,6 +101,16 @@ export COLOR_PALETTE_SERVICE_URL="http://localhost:5003/recommend"
 export AI_DESCRIPTION_SERVICE_URL="http://localhost:5001/describe"
 ```
 
+### Root package.json scripts
+
+From the repo root:
+
+- `npm run dev` – start all services in watch mode
+- `npm run dev-gateway|dev-ai|dev-color|dev-palette` – start one service
+- `npm run build` – build all workspaces
+- `npm run compose:up` / `npm run compose:down` – Docker helpers
+- `npm run sync` – synchronize service `package.json` scripts and ensure Dockerfiles include a build step
+
 ## 📡 API Endpoints
 
 - `POST /color-analysis/analyze` - Analyze colors and detect season/undertone
@@ -90,8 +120,9 @@ export AI_DESCRIPTION_SERVICE_URL="http://localhost:5001/describe"
 
 ## 🔐 Required Environment Variables
 
-- `OPENAI_API_KEY` - For AI description service
-- `MONGO_URI` - MongoDB connection string for palette and AI services
+- `OPENAI_API_KEY` - For AI description service (required)
+- `MONGO_URI` - MongoDB connection string for palette and AI services (required)
+- `PORT` - Optional per-service override (defaults: services 5000, gateway 8000)
 
 ## 🗂️ Project Structure
 
