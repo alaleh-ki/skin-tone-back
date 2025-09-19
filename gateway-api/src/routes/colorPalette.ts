@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { analyzeColorPaletteProxy } from "../controllers/colorPaletteController";
+import { recommendColorPaletteProxy } from "../controllers/colorPaletteController";
 
 const router = Router();
 
-router.post("/recommend", analyzeColorPaletteProxy);
+router.post("/recommend", recommendColorPaletteProxy);
 
 export default router;
