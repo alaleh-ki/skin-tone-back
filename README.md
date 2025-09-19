@@ -1,102 +1,111 @@
-# Skin Tone & Palette Microservices
+# ✨ Skin Tone & Color Analysis Microservices
 
-This project is a **microservices-based application** for detecting skin tone from images, generating complementary color palettes, suggesting jewelry, and creating AI-powered descriptions.
+Analyze personal colors to generate tailored clothing, makeup, and jewelry recommendations with AI support. Built as small, focused microservices that can run via Docker Compose or locally.
 
-It consists of five services, all containerized with Docker and orchestrated using Docker Compose.
+## 🏗️ Architecture
 
----
-
-## Services Overview
-
-| Service Name               | Port | Description                                                      |
-| -------------------------- | ---- | ---------------------------------------------------------------- |
-| **color-analysis-service** | 5002 | Analyzes image colors and detects skin tone                      |
-| **palette-service**        | 5003 | Generates clothing/makeup color palettes based on skin/hair tone |
-| **ai-description-service** | 5001 | Generates descriptive text for skin tones & palettes using AI    |
-| **gateway-api**            | 8000 | Acts as the API gateway for all services                         |
-
----
-
-## Prerequisites
-
-Make sure you have installed:
-
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/)
-
----
-
-## Getting Started
-
-### 1️⃣ Clone the repository
-
-```bash
-git clone https://github.com/alaleh-ki/skin-tone-back.git
-cd skin-tone-app
+```mermaid
+graph LR
+  Client-->Gateway[gateway-api:8000]
+  Gateway-->Color[color-analysis-service:5002]
+  Gateway-->Palette[palette-service:5003]
+  Gateway-->AI[ai-description-service:5001]
 ```
 
-### 2️⃣ Build and start all services
+## 📋 Services
 
-```bash
-docker-compose up --build
+| Service                  | Port | Purpose                                                        |
+| ------------------------ | ---- | -------------------------------------------------------------- |
+| `color-analysis-service` | 5002 | Detects season & undertone from skin/hair/eye colors           |
+| `palette-service`        | 5003 | Provides color palettes from MongoDB + jewelry recommendations |
+| `ai-description-service` | 5001 | Generates AI descriptions based on season and palettes         |
+| `gateway-api`            | 8000 | API gateway with Swagger documentation                         |
+
+## 🚀 Quick Start (Docker)
+
+### 1. Environment Setup
+
+Create these files:
+
+**`ai-description-service/.env`**
+
+```env
+PORT=5000
+LANG=fa
+MONGO_URI=mongodb://mongo:27017/skin_tone_app
+OPENAI_API_KEY=your_openai_api_key
 ```
 
-This command will:
+**`palette-service/.env`**
 
-- Build each service (runs `npm install` inside containers)
-- Start all services
-- Expose them on the ports listed above
-
-> **Tip:** On subsequent runs, if you haven’t changed dependencies, you can use:
->
-> ```bash
-> docker-compose up
-> ```
-
-### 3️⃣ Access the services
-
-- **Gateway API:** [http://localhost:8000](http://localhost:8000)
-- **Color Analysis Service:** [http://localhost:5002](http://localhost:5002)
-- **Palette Service:** [http://localhost:5003](http://localhost:5003)
-- **AI Description Service:** [http://localhost:5001](http://localhost:5001)
-
-### 4️⃣ Stop all services
-
-```bash
-docker-compose down
+```env
+PORT=5000
+MONGO_URI=mongodb://mongo:27017/skin_tone_app
 ```
 
----
+### 2. Start Services
 
-## Folder Structure
+```bash
+docker-compose up -d --build
+```
+
+### 3. Seed Database
+
+```bash
+docker-compose exec palette-service npm run seed
+```
+
+### 4. Access Services
+
+- **API Gateway**: http://localhost:8000
+- **Swagger Docs**: http://localhost:8000/docs
+
+## 🧑‍💻 Local Development
+
+```bash
+# Start all services
+npm run dev
+
+# Or start individually
+npm run dev-gateway
+npm run dev-ai
+npm run dev-color
+npm run dev-palette
+```
+
+Set environment variables for local development:
+
+```bash
+export COLOR_ANALYSIS_SERVICE_URL="http://localhost:5002/analyze"
+export COLOR_PALETTE_SERVICE_URL="http://localhost:5003/recommend"
+export AI_DESCRIPTION_SERVICE_URL="http://localhost:5001/describe"
+```
+
+## 📡 API Endpoints
+
+- `POST /color-analysis/analyze` - Analyze colors and detect season/undertone
+- `POST /color-palette/recommend` - Get personalized recommendations
+- `POST /ai-description/describe` - Generate AI descriptions
+- `GET /docs` - Swagger documentation
+
+## 🔐 Required Environment Variables
+
+- `OPENAI_API_KEY` - For AI description service
+- `MONGO_URI` - MongoDB connection string for palette and AI services
+
+## 🗂️ Project Structure
 
 ```
 .
-├── color-analysis-service/   # Analyzes colors and detects skin tone from images
-├── palette-service/          # Generates clothing/makeup palettes
-├── ai-description-service/   # AI-generated descriptive text
-├── gateway-api/              # API gateway for all services
-└── docker-compose.yml
+├── ai-description-service/
+├── color-analysis-service/
+├── gateway-api/
+├── palette-service/
+│   └── data/
+├── docker-compose.yml
+└── package.json
 ```
 
----
+## 🆘 Support
 
-## Development Notes
-
-- Each service has its own `package.json` and dependencies.
-- No need to run `npm install` manually — the `Dockerfile` for each service should handle this during `docker-compose build`.
-- If you change dependencies in any service:
-
-```bash
-docker-compose build servicename
-```
-
-or rebuild all:
-
-```bash
-docker-compose up --build
-```
-
-- For faster rebuilds, create a `.dockerignore` file in each service to skip unnecessary files (e.g., `node_modules`, `.git`).
-
----
+Open an issue with detailed error messages and reproduction steps.
