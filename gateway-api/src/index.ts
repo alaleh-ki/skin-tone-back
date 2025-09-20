@@ -4,6 +4,9 @@ import colorAnalysisRoutes from "./routes/colorAnalysis";
 import colorPaletteRoutes from "./routes/colorPalette";
 import aiDescriptionRoutes from "./routes/aiDescription";
 import { swaggerSpec } from "./config/swagger";
+import dotenv from "dotenv";
+
+dotenv.config({ quiet: true });
 
 const app = express();
 app.use(express.json());

@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config({ quiet: true });
 
 const COLOR_ANALYSIS_SERVICE_URL = process.env.COLOR_ANALYSIS_SERVICE_URL || "http://color-analysis-service:5000/analyze";
 const COLOR_PALETTE_SERVICE_URL = process.env.COLOR_PALETTE_SERVICE_URL || "http://palette-service:5000/recommend";
