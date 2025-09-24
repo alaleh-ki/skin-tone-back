@@ -9,7 +9,10 @@
     "dev-palette": "npm run dev --workspace=palette-service",
     "compose:up": "docker-compose up -d --build",
     "compose:down": "docker-compose down",
-    "build": "npm run build --workspaces"
+    "build": "npm run build --workspaces",
+    "install:all": "npm install --workspaces",
+    "env:init": "node scripts/copy-envs.js",
+    "seed": "npm run seed --workspace=palette-service"
   },
   "workspaces": [
     "ai-description-service",
