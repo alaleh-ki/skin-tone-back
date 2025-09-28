@@ -4,13 +4,14 @@ import dotenv from "dotenv";
 
 dotenv.config({ quiet: true });
 
-const COLOR_ANALYSIS_SERVICE_URL = process.env.COLOR_ANALYSIS_SERVICE_URL || "http://color-analysis-service:5000/analyze";
-const COLOR_PALETTE_SERVICE_URL = process.env.COLOR_PALETTE_SERVICE_URL || "http://palette-service:5000/recommend";
-const AI_DESCRIPTION_SERVICE_URL = process.env.AI_DESCRIPTION_SERVICE_URL || "http://ai-description-service:5000/describe";
+const mode = process.env.APP_MODE || "dev";
+const COLOR_ANALYSIS_SERVICE_URL = mode === "docker" ? process.env.COLOR_ANALYSIS_SERVICE_URL_DOCKER : process.env.COLOR_ANALYSIS_SERVICE_URL_DEV;
+const COLOR_PALETTE_SERVICE_URL = mode === "docker" ? process.env.COLOR_PALETTE_SERVICE_URL_DOCKER : process.env.COLOR_PALETTE_SERVICE_URL_DEV;
+const AI_DESCRIPTION_SERVICE_URL = mode === "docker" ? process.env.AI_DESCRIPTION_SERVICE_URL_DOCKER : process.env.AI_DESCRIPTION_SERVICE_URL_DEV;
 
 export const colorAnalysisProxy = async (req: Request, res: Response) => {
   try {
-    const skinToneResponse = await axios.post(COLOR_ANALYSIS_SERVICE_URL, req.body);
+    const skinToneResponse = await axios.post(COLOR_ANALYSIS_SERVICE_URL!, req.body);
     const skinAnalysis = skinToneResponse.data;
 
     const paletteRequest = {
@@ -18,10 +19,10 @@ export const colorAnalysisProxy = async (req: Request, res: Response) => {
       undertone: skinAnalysis.result.undertone,
     };
 
-    const colorPaletteResponse = await axios.post(COLOR_PALETTE_SERVICE_URL, paletteRequest);
+    const colorPaletteResponse = await axios.post(COLOR_PALETTE_SERVICE_URL!, paletteRequest);
     const colorPalette = colorPaletteResponse.data;
 
-    const aiDescriptionResponse = await axios.post(AI_DESCRIPTION_SERVICE_URL, {
+    const aiDescriptionResponse = await axios.post(AI_DESCRIPTION_SERVICE_URL!, {
       palettes: colorPalette,
       season: skinAnalysis.result.season,
     });
