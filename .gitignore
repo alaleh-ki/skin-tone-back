@@ -1,5 +1,7 @@
 # Node modules (if any in root)
 node_modules/
+dist/
+
 
 # Environment files
 .env

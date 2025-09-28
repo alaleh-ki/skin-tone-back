@@ -1,0 +1,147 @@
+paths:
+  /ai-description/describe:
+    post:
+      summary: Generate an AI-powered description for a color palette and season.
+      description: |
+        Returns a detailed, human-friendly description of the user's season and recommended palette, suitable for display in a UI.
+        - Both fields are required.
+      tags: [AI Description]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [season, palettes]
+              properties:
+                season:
+                  type: string
+                  description: Color analysis season
+                  example: "Soft Autumn"
+                palettes:
+                  type: object
+                  required: [clothing, eye_makeup, makeup, lipstick, jewelry]
+                  properties:
+                    clothing:
+                      type: array
+                      items:
+                        type: string
+                        format: hex-color
+                      example: ["#D4A59A", "#A8B29E", "#B49782"]
+                    eye_makeup:
+                      type: array
+                      items:
+                        type: string
+                        format: hex-color
+                      example: ["#CBB682", "#B08968", "#DDB892"]
+                    makeup:
+                      type: object
+                      properties:
+                        blush:
+                          type: array
+                          items:
+                            type: string
+                            format: hex-color
+                          example: ["#D4A373", "#C38370", "#B5655E"]
+                        contour:
+                          type: array
+                          items:
+                            type: string
+                            format: hex-color
+                          example: ["#8C6D52", "#7A5C48", "#6B4F3B"]
+                        highlighter:
+                          type: array
+                          items:
+                            type: string
+                            format: hex-color
+                          example: ["#E6B84C", "#D4A017", "#C1923E"]
+                    lipstick:
+                      type: array
+                      items:
+                        type: string
+                        format: hex-color
+                      example: ["#CBB682", "#B08968", "#DDB892"]
+                    jewelry:
+                      type: array
+                      items:
+                        type: string
+                        format: hex-color
+                      example: ["#D4AF37", "#FFD700", "#B8860B"]
+            example:
+              season: "Soft Autumn"
+              palettes:
+                clothing: ["#D4A59A", "#A8B29E", "#B49782"]
+                eye_makeup: ["#CBB682", "#B08968", "#DDB892"]
+                makeup:
+                  blush: ["#D4A373", "#C38370", "#B5655E"]
+                  contour: ["#8C6D52", "#7A5C48", "#6B4F3B"]
+                  highlighter: ["#E6B84C", "#D4A017", "#C1923E"]
+                lipstick: ["#CBB682", "#B08968", "#DDB892"]
+                jewelry: ["#D4AF37", "#FFD700", "#B8860B"]
+      responses:
+        200:
+          description: Successful AI description
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tone_description:
+                    type: string
+                    example: "فصل رنگ‌شناسی Soft Autumn به خاطر رنگ‌های گرم، ملایم و ماتش شناخته می‌شود."
+                  palette_type:
+                    type: string
+                    example: "گرم"
+                  clothing:
+                    type: string
+                    example: "پالت لباس با رنگ‌های گرم و خاکی، کاملاً با حال و هوای ملایم و طبیعی Soft Autumn هماهنگ است."
+                  eye_makeup:
+                    type: string
+                    example: "رنگ‌های طبیعی و خاکی این پالت، چشمان شما را به زیبایی و بدون اغراق جلوه می‌دهند."
+                  makeup:
+                    type: string
+                    example: "رژگونه‌های گرم و خاکی، همراه با کانتور و هایلایتری با رنگ‌های طلایی، برای ایجاد ظاهری طبیعی و هماهنگ با فصل عالی هستند."
+                  lipstick:
+                    type: string
+                    example: "رنگ‌های گرم و ملایم این پالت رژ لب، لب‌های شما را به زیبایی و دلنشینی به نمایش می‌گذارند."
+                  jewelry:
+                    type: string
+                    example: "جواهرات با رنگ‌های طلایی و برنزی، گرما و درخشندگی به استایل شما می‌بخشند و با فصل رنگ‌شناسی هماهنگ‌اند."
+                  season:
+                    type: string
+                    example: "فصل رنگ‌شناسی Soft Autumn با رنگ‌های گرم و خاکی تعریف می‌شود که درخششی ملایم و طبیعی به ظاهر شما می‌بخشند."
+              example:
+                tone_description: "فصل رنگ‌شناسی Soft Autumn به خاطر رنگ‌های گرم، ملایم و ماتش شناخته می‌شود."
+                palette_type: "گرم"
+                clothing: "پالت لباس با رنگ‌های گرم و خاکی، کاملاً با حال و هوای ملایم و طبیعی Soft Autumn هماهنگ است."
+                eye_makeup: "رنگ‌های طبیعی و خاکی این پالت، چشمان شما را به زیبایی و بدون اغراق جلوه می‌دهند."
+                makeup: "رژگونه‌های گرم و خاکی، همراه با کانتور و هایلایتری با رنگ‌های طلایی، برای ایجاد ظاهری طبیعی و هماهنگ با فصل عالی هستند."
+                lipstick: "رنگ‌های گرم و ملایم این پالت رژ لب، لب‌های شما را به زیبایی و دلنشینی به نمایش می‌گذارند."
+                jewelry: "جواهرات با رنگ‌های طلایی و برنزی، گرما و درخشندگی به استایل شما می‌بخشند و با فصل رنگ‌شناسی هماهنگ‌اند."
+                season: "فصل رنگ‌شناسی Soft Autumn با رنگ‌های گرم و خاکی تعریف می‌شود که درخششی ملایم و طبیعی به ظاهر شما می‌بخشند."
+        400:
+          description: Invalid or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required fields"
+                  details:
+                    type: string
+                    example: "Request body must include 'season' and 'palettes'"
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "AI service error"
+                  details:
+                    type: string
+                    example: "An unknown error occurred"

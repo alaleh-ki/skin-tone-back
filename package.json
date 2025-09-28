@@ -11,7 +11,6 @@
     "compose:down": "docker-compose down",
     "build": "npm run build --workspaces",
     "install:all": "npm install --workspaces",
-    "env:init": "node scripts/copy-envs.js",
     "seed": "npm run seed --workspace=palette-service"
   },
   "workspaces": [
