@@ -1,15 +1,13 @@
 import { Request, Response } from "express";
-import axios from "axios";
-
-const mode = process.env.APP_MODE || "dev";
-const AI_DESCRIPTION_SERVICE_URL = mode === "docker" ? process.env.AI_DESCRIPTION_SERVICE_URL_DOCKER : process.env.AI_DESCRIPTION_SERVICE_URL_DEV;
+import { describePalette } from "../services/aiDescriptionService";
+import { sendStandardResponse } from "../utils/responseUtil";
 
 export const describePaletteProxy = async (req: Request, res: Response) => {
   try {
-    const response = await axios.post(AI_DESCRIPTION_SERVICE_URL!, req.body);
-    res.json(response.data);
+    const result = await describePalette(req.body);
+    sendStandardResponse(res, result, 200);
   } catch (error: any) {
     console.error("Error calling ai-description-service:", error);
-    res.status(500).json({ error: "Failed to generate AI description" });
+    sendStandardResponse(res, { error: "Failed to generate AI description" }, 500);
   }
 };
