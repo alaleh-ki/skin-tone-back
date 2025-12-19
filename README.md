@@ -6,7 +6,7 @@ Analyze personal colors to generate tailored clothing, makeup, and jewelry recom
 
 ```mermaid
 graph LR
-  Client-->Gateway[gateway-api:8000]
+  Frontend[frontend:3000]-->Gateway[gateway-api:8000]
   Gateway-->Color[color-analysis-service:5002]
   Gateway-->Palette[palette-service:5003]
   Gateway-->AI[ai-description-service:5001]
@@ -42,6 +42,7 @@ copy ai-description-service\example.env ai-description-service\.env
 copy palette-service\example.env palette-service\.env
 copy gateway-api\example.env gateway-api\.env
 copy color-analysis-service\example.env color-analysis-service\.env
+copy frontend\.env.example frontend\.env
 ```
 
 **On Mac/Linux/Git Bash:**
@@ -51,6 +52,7 @@ cp ai-description-service/example.env ai-description-service/.env
 cp palette-service/example.env palette-service/.env
 cp gateway-api/example.env gateway-api/.env
 cp color-analysis-service/example.env color-analysis-service/.env
+cp frontend/.env.example frontend/.env
 ```
 
 ### 3. Add Your OpenAI API Key
@@ -80,9 +82,17 @@ npm run seed
   ```sh
   npm run compose:up
   ```
+  Access the frontend at `http://localhost:3000`
+
 - **For Local Development:**
   ```sh
   npm run dev
+  ```
+  This starts all services including the frontend. Access the frontend at `http://localhost:5173`
+
+- **To run only the frontend:**
+  ```sh
+  npm run dev-frontend
   ```
 
 ---
@@ -91,6 +101,7 @@ npm run seed
 
 | Service                  | Port | Purpose                                                        |
 | ------------------------ | ---- | -------------------------------------------------------------- |
+| `frontend`               | 3000 | React web application with color analysis UI                    |
 | `color-analysis-service` | 5002 | Detects season & undertone from skin/hair/eye colors           |
 | `palette-service`        | 5003 | Provides color palettes from MongoDB + jewelry recommendations |
 | `ai-description-service` | 5001 | Generates AI descriptions based on season and palettes         |
@@ -102,6 +113,13 @@ npm run seed
 
 ```
 .
+├── frontend/              # React + Vite + TypeScript frontend
+│   ├── src/
+│   │   ├── pages/        # HomePage, ResultsPage
+│   │   ├── components/   # ColorPicker, ImageUpload
+│   │   ├── services/     # API client
+│   │   └── types/         # TypeScript types
+│   └── Dockerfile
 ├── ai-description-service/
 ├── color-analysis-service/
 ├── gateway-api/
@@ -124,10 +142,31 @@ npm run seed
 
 ## 🔐 Required Environment Variables
 
+### Frontend (`frontend/.env`)
+- `VITE_API_URL` - Gateway API URL (default: `http://localhost:8000`)
+
+### Gateway API (`gateway-api/.env`)
+- `CORS_ORIGIN` - Comma-separated list of allowed origins (default: `http://localhost:5173,http://localhost:3000`)
+- `PORT` - API port (default: 8000)
+- `APP_MODE` - Set to `dev` or `docker`
+
+### Other Services
 - `OPENAI_API_KEY` - For AI description service (required)
 - `MONGODB_URI_DEV` / `MONGODB_URI_DOCKER` - MongoDB connection strings for palette and AI services (required)
 - `PORT` - Optional per-service override (defaults: services 5000, gateway 8000)
 - `APP_MODE` - Set to `dev` or `docker` to control environment switching
+
+## 🎨 Frontend Features
+
+The frontend provides a user-friendly interface for color analysis:
+
+- **Home Page**: Upload a photo (optional), select skin, hair, and eye colors using color pickers
+- **Results Page**: View detailed analysis including:
+  - Skin tone analysis (season, undertone, value, chroma)
+  - AI-generated descriptions
+  - Color palettes for clothing, makeup, jewelry with visual swatches
+- **Responsive Design**: Works on desktop and mobile devices
+- **Modern UI**: Built with React, TypeScript, and Tailwind CSS
 
 ---
 

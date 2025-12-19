@@ -7,6 +7,7 @@
     "dev-ai": "npm run dev --workspace=ai-description-service",
     "dev-color": "npm run dev --workspace=color-analysis-service",
     "dev-palette": "npm run dev --workspace=palette-service",
+    "dev-frontend": "npm run dev --workspace=frontend",
     "compose:up": "docker-compose up -d --build",
     "compose:down": "docker-compose down",
     "build": "npm run build --workspaces",
@@ -16,6 +17,7 @@
   "workspaces": [
     "ai-description-service",
     "color-analysis-service",
+    "frontend",
     "gateway-api",
     "palette-service"
   ],
