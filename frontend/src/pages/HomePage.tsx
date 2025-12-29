@@ -11,6 +11,13 @@ export const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<ColorAnalysisResponse | null>(null);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const steps = [
+    { title: 'Overview', subtitle: 'Your Season' },
+    { title: 'Style', subtitle: 'Clothing & Jewelry' },
+    { title: 'Makeup', subtitle: 'Complete Look' },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +32,29 @@ export const HomePage = () => {
       });
 
       setAnalysisResult(result);
+      setCurrentStep(0); // Reset to first step
     } catch (err: any) {
       setError(err.message || 'Failed to analyze colors. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleNextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleNewAnalysis = () => {
+    setAnalysisResult(null);
+    setCurrentStep(0);
   };
 
   return (
@@ -114,101 +139,82 @@ export const HomePage = () => {
         </div>
 
         <div className="rounded-xl backdrop-blur-xs shadow-sm bg-background/70 border border-border overflow-hidden flex flex-col md:h-full min-h-[600px]">
-          <div className="overflow-y-auto flex-1 p-6 space-y-6">
-            {analysisResult ? (
-              <>
-                <div className="text-center">
-                  <h3 className="text-xl font-bold mb-4">Your Results</h3>
+          {analysisResult ? (
+            <>
+              {/* Stepper Progress */}
+              <div className="p-6 border-b border-border/40">
+                <div className="text-center mb-4">
+                  <h3 className="text-xl font-bold">Your Results</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{steps[currentStep].title} - {steps[currentStep].subtitle}</p>
                 </div>
-
-                <div className="space-y-4 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Skin Tone Analysis</h4>
-                  <div className="grid grid-cols-2 gap-3 text-center max-w-xs mx-auto">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Season</p>
-                      <p className="text-sm font-semibold">{analysisResult.skinTone.season}</p>
+                <div className="flex items-center justify-center gap-2">
+                  {steps.map((_, idx) => (
+                    <div key={idx} className="flex items-center">
+                      <button
+                        onClick={() => setCurrentStep(idx)}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${idx === currentStep
+                          ? 'bg-primary-500 text-white'
+                          : idx < currentStep
+                            ? 'bg-primary-500/30 text-primary-700 dark:text-primary-300'
+                            : 'bg-muted text-muted-foreground'
+                          }`}
+                      >
+                        {idx + 1}
+                      </button>
+                      {idx < steps.length - 1 && (
+                        <div className={`w-8 h-0.5 ${idx < currentStep ? 'bg-primary-500/30' : 'bg-muted'}`} />
+                      )}
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Undertone</p>
-                      <p className="text-sm font-semibold">{analysisResult.skinTone.undertone}</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="overflow-y-auto flex-1 p-6">
+                {currentStep === 0 && (
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-semibold text-center">Skin Tone Analysis</h4>
+                      <div className="grid grid-cols-2 gap-3 text-center max-w-xs mx-auto">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Season</p>
+                          <p className="text-sm font-semibold">{analysisResult.skinTone.season}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Undertone</p>
+                          <p className="text-sm font-semibold">{analysisResult.skinTone.undertone}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">About Your Season</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.season}
-                  </p>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.tone_description}
-                  </p>
-                </div>
-
-                <div className="space-y-3 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Clothing Colors</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.clothing}
-                  </p>
-                  <div className="flex justify-center">
-                    <div className="flex items-center">
-                      {analysisResult.colorPalette.clothing.map((color, idx) => (
-                        <div
-                          key={idx}
-                          className="w-10 h-10 rounded-full border-2 border-background shadow-md"
-                          style={{
-                            backgroundColor: color,
-                            marginLeft: idx > 0 ? '-8px' : '0',
-                            zIndex: analysisResult.colorPalette.clothing.length - idx
-                          }}
-                          title={color}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Eye Makeup</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.eye_makeup}
-                  </p>
-                  <div className="flex justify-center">
-                    <div className="flex items-center">
-                      {analysisResult.colorPalette.eye_makeup.map((color, idx) => (
-                        <div
-                          key={idx}
-                          className="w-10 h-10 rounded-full border-2 border-background shadow-md"
-                          style={{
-                            backgroundColor: color,
-                            marginLeft: idx > 0 ? '-8px' : '0',
-                            zIndex: analysisResult.colorPalette.eye_makeup.length - idx
-                          }}
-                          title={color}
-                        />
-                      ))}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold text-center">About Your Season</h4>
+                      <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                        {analysisResult.aiDescription.season}
+                      </p>
+                      <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                        {analysisResult.aiDescription.tone_description}
+                      </p>
                     </div>
                   </div>
-                </div>
+                )}
 
-                <div className="space-y-3 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Makeup</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.makeup}
-                  </p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-xs font-medium text-center mb-2">Blush</p>
-                      <div className="flex justify-center">
+                {currentStep === 1 && (
+                  <div className="space-y-6">
+                    <div className="space-y-3 pb-6 border-b border-border/40">
+                      <h4 className="text-lg font-semibold text-center">Clothing Colors</h4>
+                      <p className="text-sm text-center text-muted-foreground leading-relaxed max-w-md mx-auto">
+                        {analysisResult.aiDescription.clothing}
+                      </p>
+                      <div className="flex justify-center pt-4">
                         <div className="flex items-center">
-                          {analysisResult.colorPalette.makeup.blush.map((color, idx) => (
+                          {analysisResult.colorPalette.clothing.map((color, idx) => (
                             <div
                               key={idx}
-                              className="w-8 h-8 rounded-full border-2 border-background shadow-md"
+                              className="w-14 h-14 rounded-full border-2 border-background shadow-lg"
                               style={{
                                 backgroundColor: color,
-                                marginLeft: idx > 0 ? '-6px' : '0',
-                                zIndex: analysisResult.colorPalette.makeup.blush.length - idx
+                                marginLeft: idx > 0 ? '-12px' : '0',
+                                zIndex: analysisResult.colorPalette.clothing.length - idx
                               }}
                               title={color}
                             />
@@ -216,37 +222,22 @@ export const HomePage = () => {
                         </div>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-medium text-center mb-2">Contour</p>
-                      <div className="flex justify-center">
+
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-semibold text-center">Jewelry</h4>
+                      <p className="text-sm text-center text-muted-foreground leading-relaxed max-w-md mx-auto">
+                        {analysisResult.aiDescription.jewelry}
+                      </p>
+                      <div className="flex justify-center pt-4">
                         <div className="flex items-center">
-                          {analysisResult.colorPalette.makeup.contour.map((color, idx) => (
+                          {analysisResult.colorPalette.jewelry.map((color, idx) => (
                             <div
                               key={idx}
-                              className="w-8 h-8 rounded-full border-2 border-background shadow-md"
+                              className="w-14 h-14 rounded-full border-2 border-background shadow-lg"
                               style={{
                                 backgroundColor: color,
-                                marginLeft: idx > 0 ? '-6px' : '0',
-                                zIndex: analysisResult.colorPalette.makeup.contour.length - idx
-                              }}
-                              title={color}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-center mb-2">Highlighter</p>
-                      <div className="flex justify-center">
-                        <div className="flex items-center">
-                          {analysisResult.colorPalette.makeup.highlighter.map((color, idx) => (
-                            <div
-                              key={idx}
-                              className="w-8 h-8 rounded-full border-2 border-background shadow-md"
-                              style={{
-                                backgroundColor: color,
-                                marginLeft: idx > 0 ? '-6px' : '0',
-                                zIndex: analysisResult.colorPalette.makeup.highlighter.length - idx
+                                marginLeft: idx > 0 ? '-12px' : '0',
+                                zIndex: analysisResult.colorPalette.jewelry.length - idx
                               }}
                               title={color}
                             />
@@ -255,64 +246,154 @@ export const HomePage = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                <div className="space-y-3 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Lipstick</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.lipstick}
-                  </p>
-                  <div className="flex justify-center">
-                    <div className="flex items-center">
-                      {analysisResult.colorPalette.lipstick.map((color, idx) => (
-                        <div
-                          key={idx}
-                          className="w-10 h-10 rounded-full border-2 border-background shadow-md"
-                          style={{
-                            backgroundColor: color,
-                            marginLeft: idx > 0 ? '-8px' : '0',
-                            zIndex: analysisResult.colorPalette.lipstick.length - idx
-                          }}
-                          title={color}
-                        />
-                      ))}
+                {currentStep === 2 && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-6 pb-6 border-b border-border/40">
+                      <div className="space-y-3">
+                        <h4 className="text-base font-semibold text-center">Eye Makeup</h4>
+                        <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                          {analysisResult.aiDescription.eye_makeup}
+                        </p>
+                        <div className="flex justify-center pt-2">
+                          <div className="flex items-center">
+                            {analysisResult.colorPalette.eye_makeup.map((color, idx) => (
+                              <div
+                                key={idx}
+                                className="w-10 h-10 rounded-full border-2 border-background shadow-md"
+                                style={{
+                                  backgroundColor: color,
+                                  marginLeft: idx > 0 ? '-8px' : '0',
+                                  zIndex: analysisResult.colorPalette.eye_makeup.length - idx
+                                }}
+                                title={color}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="text-base font-semibold text-center">Lipstick</h4>
+                        <p className="text-xs text-center text-muted-foreground leading-relaxed">
+                          {analysisResult.aiDescription.lipstick}
+                        </p>
+                        <div className="flex justify-center pt-2">
+                          <div className="flex items-center">
+                            {analysisResult.colorPalette.lipstick.map((color, idx) => (
+                              <div
+                                key={idx}
+                                className="w-10 h-10 rounded-full border-2 border-background shadow-md"
+                                style={{
+                                  backgroundColor: color,
+                                  marginLeft: idx > 0 ? '-8px' : '0',
+                                  zIndex: analysisResult.colorPalette.lipstick.length - idx
+                                }}
+                                title={color}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-semibold text-center">Face Makeup</h4>
+                      <p className="text-sm text-center text-muted-foreground leading-relaxed max-w-md mx-auto">
+                        {analysisResult.aiDescription.makeup}
+                      </p>
+                      <div className="grid grid-cols-3 gap-4 pt-4">
+                        <div>
+                          <p className="text-xs font-medium text-center mb-2">Blush</p>
+                          <div className="flex justify-center">
+                            <div className="flex items-center">
+                              {analysisResult.colorPalette.makeup.blush.map((color, idx) => (
+                                <div
+                                  key={idx}
+                                  className="w-8 h-8 rounded-full border-2 border-background shadow-md"
+                                  style={{
+                                    backgroundColor: color,
+                                    marginLeft: idx > 0 ? '-6px' : '0',
+                                    zIndex: analysisResult.colorPalette.makeup.blush.length - idx
+                                  }}
+                                  title={color}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-center mb-2">Contour</p>
+                          <div className="flex justify-center">
+                            <div className="flex items-center">
+                              {analysisResult.colorPalette.makeup.contour.map((color, idx) => (
+                                <div
+                                  key={idx}
+                                  className="w-8 h-8 rounded-full border-2 border-background shadow-md"
+                                  style={{
+                                    backgroundColor: color,
+                                    marginLeft: idx > 0 ? '-6px' : '0',
+                                    zIndex: analysisResult.colorPalette.makeup.contour.length - idx
+                                  }}
+                                  title={color}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-center mb-2">Highlighter</p>
+                          <div className="flex justify-center">
+                            <div className="flex items-center">
+                              {analysisResult.colorPalette.makeup.highlighter.map((color, idx) => (
+                                <div
+                                  key={idx}
+                                  className="w-8 h-8 rounded-full border-2 border-background shadow-md"
+                                  style={{
+                                    backgroundColor: color,
+                                    marginLeft: idx > 0 ? '-6px' : '0',
+                                    zIndex: analysisResult.colorPalette.makeup.highlighter.length - idx
+                                  }}
+                                  title={color}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+              </div>
 
-                <div className="space-y-3 pb-6 border-b border-border/40">
-                  <h4 className="text-sm font-semibold text-center">Jewelry</h4>
-                  <p className="text-xs text-center text-muted-foreground leading-relaxed">
-                    {analysisResult.aiDescription.jewelry}
-                  </p>
-                  <div className="flex justify-center">
-                    <div className="flex items-center">
-                      {analysisResult.colorPalette.jewelry.map((color, idx) => (
-                        <div
-                          key={idx}
-                          className="w-10 h-10 rounded-full border-2 border-background shadow-md"
-                          style={{
-                            backgroundColor: color,
-                            marginLeft: idx > 0 ? '-8px' : '0',
-                            zIndex: analysisResult.colorPalette.jewelry.length - idx
-                          }}
-                          title={color}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-center">
+              {/* Navigation */}
+              <div className="p-6 border-t border-border/40">
+                <div className="flex items-center justify-between gap-4">
                   <button
-                    onClick={() => setAnalysisResult(null)}
-                    className="btn-primary"
+                    onClick={handlePrevStep}
+                    disabled={currentStep === 0}
+                    className="btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={handleNewAnalysis}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
                     Start New Analysis
                   </button>
+                  <button
+                    onClick={handleNextStep}
+                    disabled={currentStep === steps.length - 1}
+                    className="btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
                 </div>
-              </>
-            ) : (
+              </div>
+            </>
+          ) : (
+            <div className="overflow-y-auto flex-1 p-6">
               <div className="flex flex-col items-center justify-center text-center h-full">
                 <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center">
                   <svg
@@ -352,8 +433,8 @@ export const HomePage = () => {
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
