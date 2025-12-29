@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+'use client'
+import { useState, useEffect } from 'react'
+import { Button } from './ui/button'
 
 interface ColorPickerProps {
   label: string;
@@ -6,92 +8,76 @@ interface ColorPickerProps {
   onChange: (rgb: [number, number, number]) => void;
 }
 
-export const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => {
-  const [hexColor, setHexColor] = useState(
-    `#${value[0].toString(16).padStart(2, '0')}${value[1].toString(16).padStart(2, '0')}${value[2].toString(16).padStart(2, '0')}`
-  );
+// Convert RGB tuple to hex string
+function rgbToHex(r: number, g: number, b: number): string {
+  return `#${[r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  }).join('')}`;
+}
 
+// Convert hex string to RGB tuple
+function hexToRgb(hex: string): [number, number, number] {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? [
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16),
+    ]
+    : [0, 0, 0];
+}
+
+export function ColorPicker({
+  label,
+  value,
+  onChange,
+}: ColorPickerProps) {
+  const defaultColor = rgbToHex(value[0], value[1], value[2]);
+  const [selectedColor, setSelectedColor] = useState(defaultColor);
+
+  // Update selectedColor when value prop changes
   useEffect(() => {
-    const hex = `#${value[0].toString(16).padStart(2, '0')}${value[1].toString(16).padStart(2, '0')}${value[2].toString(16).padStart(2, '0')}`;
-    setHexColor(hex);
+    const hex = rgbToHex(value[0], value[1], value[2]);
+    setSelectedColor(hex);
   }, [value]);
 
-  const handleHexChange = (hex: string) => {
-    setHexColor(hex);
-    if (hex.length === 7 && /^#[0-9A-F]{6}$/i.test(hex)) {
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-      onChange([r, g, b]);
-    }
-  };
+  const hasEyeDropperSupport = () => 'EyeDropper' in window
 
-  const handleRgbChange = (index: number, val: string) => {
-    const numVal = parseInt(val) || 0;
-    const clampedVal = Math.max(0, Math.min(255, numVal));
-    const newValue: [number, number, number] = [...value];
-    newValue[index] = clampedVal;
-    onChange(newValue);
-  };
+  const pickColor = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!hasEyeDropperSupport()) {
+      console.warn('EyeDropper API is not supported in this browser')
+      return
+    }
+    try {
+      // @ts-expect-error - EyeDropper is not defined in the global scope
+      const eyeDropper = new window.EyeDropper()
+      const result = await eyeDropper.open()
+      const hexColor = result.sRGBHex;
+      setSelectedColor(hexColor);
+      const rgbValue = hexToRgb(hexColor);
+      onChange(rgbValue);
+    } catch (e) {
+      console.error('Error picking color:', e)
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="block text-sm font-semibold leading-none">
-        {label}
-      </label>
-      <div className="flex items-center gap-4 flex-wrap">
-        <input
-          type="color"
-          value={hexColor}
-          onChange={(e) => handleHexChange(e.target.value)}
-          className="w-20 h-12 rounded-lg border border-border/60 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
-          aria-label={`${label} color picker`}
-        />
-        <div
-          className="w-16 h-16 rounded-lg border border-border/60 shadow-sm"
-          style={{ backgroundColor: hexColor }}
-          aria-label={`${label} preview`}
-        />
-        <div className="flex gap-2">
-          <div className="flex flex-col">
-            <label className="text-xs text-muted-foreground mb-1 font-medium">R</label>
-            <input
-              type="number"
-              min="0"
-              max="255"
-              value={value[0]}
-              onChange={(e) => handleRgbChange(0, e.target.value)}
-              className="w-20 input-field text-center"
-              aria-label={`${label} red value`}
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs text-muted-foreground mb-1 font-medium">G</label>
-            <input
-              type="number"
-              min="0"
-              max="255"
-              value={value[1]}
-              onChange={(e) => handleRgbChange(1, e.target.value)}
-              className="w-20 input-field text-center"
-              aria-label={`${label} green value`}
-            />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs text-muted-foreground mb-1 font-medium">B</label>
-            <input
-              type="number"
-              min="0"
-              max="255"
-              value={value[2]}
-              onChange={(e) => handleRgbChange(2, e.target.value)}
-              className="w-20 input-field text-center"
-              aria-label={`${label} blue value`}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+    <Button
+      type="button"
+      variant="outline"
+      onClick={pickColor}
+      size="lg"
+      className="cursor-pointer p-1 justify-start lg:text-xs xl:text-sm"
+    >
+      <div
+        className="w-8 h-8 rounded-md shadow-sm border border-border"
+        style={{ backgroundColor: selectedColor }}
+      ></div>
+      {label}
+    </Button>
+  )
+}

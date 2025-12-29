@@ -10,6 +10,8 @@
     --card-foreground: 23 23 23;
     --muted: 247 247 247;
     --muted-foreground: 115 115 115;
+    --accent: 247 247 247;
+    --accent-foreground: 23 23 23;
     --border: 229 229 229;
     --input: 229 229 229;
   }
@@ -21,6 +23,8 @@
     --card-foreground: 250 250 250;
     --muted: 39 39 39;
     --muted-foreground: 163 163 163;
+    --accent: 39 39 39;
+    --accent-foreground: 250 250 250;
     --border: 39 39 39;
     --input: 39 39 39;
   }
