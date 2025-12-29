@@ -15,7 +15,7 @@ const DescriptionSchema = new Schema({
   },
   response: {
     tone_description: String,
-    palette_type: { type: String, enum: ["گرم", "سرد", "خنثی"] },
+    palette_type: { type: String, enum: ["warm", "cool", "neutral"] },
     clothing: String,
     eye_makeup: String,
     makeup: String,
