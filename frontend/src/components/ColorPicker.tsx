@@ -35,8 +35,8 @@ export const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">
+    <div className="flex flex-col gap-2">
+      <label className="block text-sm font-semibold leading-none">
         {label}
       </label>
       <div className="flex items-center gap-4 flex-wrap">
@@ -44,17 +44,17 @@ export const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => {
           type="color"
           value={hexColor}
           onChange={(e) => handleHexChange(e.target.value)}
-          className="w-20 h-12 rounded-lg border-2 border-gray-300 cursor-pointer"
+          className="w-20 h-12 rounded-lg border border-border/60 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
           aria-label={`${label} color picker`}
         />
         <div
-          className="w-16 h-16 rounded-lg border-2 border-gray-300 shadow-md"
+          className="w-16 h-16 rounded-lg border border-border/60 shadow-sm"
           style={{ backgroundColor: hexColor }}
           aria-label={`${label} preview`}
         />
         <div className="flex gap-2">
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">R</label>
+            <label className="text-xs text-muted-foreground mb-1 font-medium">R</label>
             <input
               type="number"
               min="0"
@@ -66,7 +66,7 @@ export const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => {
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">G</label>
+            <label className="text-xs text-muted-foreground mb-1 font-medium">G</label>
             <input
               type="number"
               min="0"
@@ -78,7 +78,7 @@ export const ColorPicker = ({ label, value, onChange }: ColorPickerProps) => {
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-xs text-gray-600 mb-1">B</label>
+            <label className="text-xs text-muted-foreground mb-1 font-medium">B</label>
             <input
               type="number"
               min="0"

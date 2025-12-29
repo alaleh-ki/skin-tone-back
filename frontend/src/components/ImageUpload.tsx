@@ -76,16 +76,12 @@ export const ImageUpload = ({ onImageSelect }: ImageUploadProps) => {
   };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-semibold text-gray-700">
-        Upload Your Photo (Optional)
-      </label>
+    <div className="flex flex-col gap-4">
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${
-          dragActive
-            ? 'border-primary-500 bg-primary-50'
-            : 'border-primary-300 bg-gray-50 hover:border-primary-400'
-        }`}
+        className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${dragActive
+          ? 'border-primary-500 bg-primary-500/10 dark:bg-primary-500/20'
+          : 'border-muted-foreground/25'
+          }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -93,11 +89,11 @@ export const ImageUpload = ({ onImageSelect }: ImageUploadProps) => {
         onClick={() => fileInputRef.current?.click()}
       >
         {preview ? (
-          <div className="relative">
+          <div className="relative w-full h-64 rounded-md overflow-hidden">
             <img
               src={preview}
               alt="Preview"
-              className="max-w-full max-h-96 mx-auto rounded-lg shadow-md"
+              className="w-full h-full object-cover"
             />
             <button
               type="button"
@@ -105,15 +101,15 @@ export const ImageUpload = ({ onImageSelect }: ImageUploadProps) => {
                 e.stopPropagation();
                 handleRemove();
               }}
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              className="absolute top-2 right-2 w-9 h-9 rounded-md hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 flex items-center justify-center text-gray-500 text-2xl"
             >
-              Remove Image
+              &times;
             </button>
           </div>
         ) : (
           <div className="cursor-pointer">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-12 w-12 text-muted-foreground"
               stroke="currentColor"
               fill="none"
               viewBox="0 0 48 48"
@@ -126,12 +122,13 @@ export const ImageUpload = ({ onImageSelect }: ImageUploadProps) => {
                 strokeLinejoin="round"
               />
             </svg>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-muted-foreground mb-2">
               Click to upload or drag and drop
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mb-4">
               PNG, JPG, GIF, WebP up to 10MB
             </p>
+            <p className="text-xs text-primary font-medium">Click to browse files</p>
           </div>
         )}
       </div>

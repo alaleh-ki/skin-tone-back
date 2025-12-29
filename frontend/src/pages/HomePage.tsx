@@ -40,85 +40,126 @@ export const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container-custom">
-        <h1 className="text-4xl font-bold text-white text-center mb-8">
-          Skin Tone & Color Analysis
-        </h1>
-
-        <div className="card mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Instructions</h2>
-          <ol className="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Upload a photo of yourself (optional, for reference)</li>
-            <li>Use the color pickers to select your skin tone, hair color, and eye color</li>
-            <li>You can adjust RGB values manually or use the color picker</li>
-            <li>Click "Analyze Colors" to get your personalized color palette</li>
-          </ol>
-        </div>
-
-        <form onSubmit={handleSubmit} className="card space-y-6">
-          <ImageUpload onImageSelect={setImage} />
-
-          <div className="space-y-6">
-            <ColorPicker
-              label="Skin Color"
-              value={skinColor}
-              onChange={setSkinColor}
-            />
-            <ColorPicker
-              label="Hair Color"
-              value={hairColor}
-              onChange={setHairColor}
-            />
-            <ColorPicker
-              label="Eye Color"
-              value={eyeColor}
-              onChange={setEyeColor}
-            />
+    <div className="min-h-screen p-4 sm:p-8 md:p-4 pb-20">
+      <main className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+        <div className="flex flex-col gap-8">
+          <div className="card">
+            <div className="card-header">
+              <h2 className="text-lg font-semibold leading-none mb-1.5">Upload Your Photo</h2>
+              <p className="text-sm text-muted-foreground">Optional, for reference</p>
+            </div>
+            <div className="card-content">
+              <ImageUpload onImageSelect={setImage} />
+            </div>
           </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              <p className="font-semibold">Error</p>
-              <p>{error}</p>
+          <form onSubmit={handleSubmit} className="card">
+            <div className="card-header">
+              <h2 className="text-lg font-semibold leading-none mb-1.5">Color Selection</h2>
+              <p className="text-sm text-muted-foreground">Select your skin tone, hair, and eye colors</p>
             </div>
-          )}
+            <div className="card-content flex flex-col gap-6">
+              <ColorPicker
+                label="Skin Color"
+                value={skinColor}
+                onChange={setSkinColor}
+              />
+              <ColorPicker
+                label="Hair Color"
+                value={hairColor}
+                onChange={setHairColor}
+              />
+              <ColorPicker
+                label="Eye Color"
+                value={eyeColor}
+                onChange={setEyeColor}
+              />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Analyzing...
-              </span>
-            ) : (
-              'Analyze Colors'
-            )}
-          </button>
-        </form>
-      </div>
+              {error && (
+                <div className="bg-red-50/80 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/40 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg backdrop-blur-xs">
+                  <p className="font-semibold">Error</p>
+                  <p>{error}</p>
+                </div>
+              )}
+            </div>
+            <div className="card-footer flex justify-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Analyzing...
+                  </span>
+                ) : (
+                  'Analyze Colors'
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl backdrop-blur-xs shadow-sm bg-background/70 border border-border">
+          <div className="w-16 h-16 mb-4 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-primary-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Ready to Get Started?</h3>
+          <p className="text-sm max-w-sm leading-relaxed mb-4 text-muted-foreground">
+            Upload your photo and select your colors to receive a personalized color palette analysis.
+          </p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-muted-foreground mb-6">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
+              <span>Personalized analysis</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
+              <span>Color recommendations</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
+              <span>Makeup suggestions</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
+              <span>Style guidance</span>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
