@@ -1,5 +1,13 @@
 version: "3.8"
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://gateway-api:8000
+    depends_on:
+      - gateway-api
   gateway-api:
     build: ./gateway-api
     ports:
@@ -8,6 +16,7 @@ services:
       - COLOR_ANALYSIS_SERVICE_URL=http://color-analysis-service:5002/analyze
       - COLOR_PALETTE_SERVICE_URL=http://palette-service:5003/recommend
       - AI_DESCRIPTION_SERVICE_URL=http://ai-description-service:5001/describe
+      - CORS_ORIGIN=http://localhost:3000,http://localhost:5173
   ai-description-service:
     build: ./ai-description-service
     ports:
